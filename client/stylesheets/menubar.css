@@ -1,0 +1,28 @@
+.menubar {
+	width: auto;
+	background-color: red;
+}
+
+.menubar ul {
+	display: inline-block;
+	list-style: none;
+	line-height: 1;
+	zoom: 1;
+	margin: 15px 0;
+	padding: 0;
+}
+
+.login-buttons {
+	display: inline-block;
+	list-style: none;
+	line-height: 1;
+	zoom: 1;
+	margin: 15px 25px;
+	padding: 0;
+	float: right;
+}
+
+.menubar li {
+	display: inline-block;
+	margin: 0 25px;
+}
