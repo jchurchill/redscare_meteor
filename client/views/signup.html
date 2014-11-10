@@ -1,0 +1,38 @@
+<template name="signup">
+	<div class="signup-form">
+		{{#if errors.general}}
+			<div class="signup-error">{{errors.general}}</div>
+		{{/if}}
+		{{> signupField
+			id="signup-username"
+			fieldname="username"
+			type="text"
+			placeholderText="Username"
+			error=errors.username
+		}}
+		{{> signupField
+			id="signup-email"
+			fieldname="email"
+			type="text"
+			placeholderText="Email"
+			error=errors.email
+		}}
+		{{> signupField
+			id="signup-password"
+			fieldname="password"
+			type="password"
+			placeholderText="Password"
+			error=errors.password
+		}}
+		<div>
+			<button type="button" title="hi" class="signup-element">Sign up</button>
+		</div>
+	</div>
+</template>
+
+<template name="signupField">
+	<div id="{{id}}" data-fieldname="{{fieldname}}">
+		<input class="signup-element" type="{{type}}" placeholder="{{placeholderText}}">
+		<span title class="error-symbol {{#unless error}}hidden{{/unless}}">!</span>
+	</div>
+</template>

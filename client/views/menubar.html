@@ -4,7 +4,9 @@
 			<li class="left">The Red Scare</li>
 		</ul>
 		<div class="login-buttons">
-			{{> loginButtons align="right"}}
+			{{#if currentUser}}
+				{{> loginButtons align="right"}}
+			{{/if}}
 		</div>
 	</div>
 </template>

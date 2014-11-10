@@ -2,6 +2,11 @@ body {
 	margin: 0;
 }
 
+.hidden {
+	visibility: hidden;
+	display: none;
+}
+
 .clearfix:after {
 	content: " ";
 	display: block;
@@ -9,4 +14,13 @@ body {
 	font-size: 0;
 	clear: both;
 	visibility: hidden;
+}
+
+.ui-tooltip {
+	font-size: 0.6em;
+	padding: 4px;
+	border-radius: 2px;
+	margin: 0px;
+	background-color: rgba(0,0,0,0.8);
+	color: white;
 }

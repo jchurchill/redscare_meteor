@@ -1,0 +1,11 @@
+<template name="home">
+	{{#unless currentUser}}
+		{{> signup}}
+	{{else}}
+		{{#if loggingIn}}
+			Logging in...
+		{{else}}
+			{{> index}}
+		{{/if}}
+	{{/unless}}
+</template>
