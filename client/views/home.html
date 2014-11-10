@@ -1,6 +1,8 @@
 <template name="home">
 	{{#unless currentUser}}
-		{{> signup}}
+		<div class="login-home">
+		{{> loginOrSignup}}
+		</div>
 	{{else}}
 		{{#if loggingIn}}
 			Logging in...

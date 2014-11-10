@@ -1,0 +1,64 @@
+.login-or-signup-form {
+	text-align: center;
+	float: right;
+	margin: 20px 0 10px 10px;
+}
+
+.login-or-signup-form .account-element {
+	margin: 3px 5px;
+	width: 200px;
+	padding: 5px;
+	box-sizing: content-box;
+	border-radius: 3px;
+	border: none;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.38),0 1px 3px rgba(0, 0, 0, 0.32);
+	text-shadow: 0 -1px rgba(0, 0, 0, 0.11);
+	font-weight: bold;
+}
+
+.login-or-signup-form button {
+	background-color: #CC0422;
+	cursor: pointer;
+}
+
+.error-symbol {
+	position: absolute;
+	margin: 7px 2px 0 0;
+	background-color: red;
+	padding: 2px 6px;
+	border-radius: 50%;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.38),0 1px 3px rgba(0, 0, 0, 0.32);
+	text-shadow: 1px 1px rgba(0, 0, 0, 0.11);
+	color: #FFFFFF;
+	font-weight: bold;
+	font-size: 0.7em;
+}
+
+.login-form, .signup-form {
+	margin: 10px 50px 10px auto;
+	background-color: rgba(255,255,255,0.8);
+	padding: 2px;
+	border: 1px solid #AAAAAA;
+	border-radius: 4px;
+}
+
+.section-top {
+	padding: 4px 3px 6px 3px;
+	border-bottom: 1px solid #888888;
+	border-radius: 4px 4px 0 0;
+}
+
+.signup-form .section-top {
+	font-size: 0.8em;
+	color: #444444;
+	text-shadow: 1px 1px rgba(80,80,80,0.2);
+}
+
+.section-bottom {
+	padding: 2px;
+	border-radius: 0 0 4px 4px;
+}
+
+.account-error {
+	color: #FF0022;
+}

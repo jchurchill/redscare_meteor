@@ -1,0 +1,74 @@
+<template name="loginOrSignup">
+	<div class="login-or-signup-form">
+		<div class="login-form">
+			{{#if loginErrors.general}}
+				<div class="account-error">{{loginErrors.general}}</div>
+			{{/if}}
+			{{> accountField
+				id = "login-username-or-email"
+				fieldname = "usernameOrEmail"
+				type = "text"
+				placeholderText = "Username or Email"
+				additionalClasses = "login-field"
+				error = loginErrors.usernameOrEmail
+			}}
+			{{> accountField
+				id = "login-password"
+				fieldname = "password"
+				type = "password"
+				placeholderText = "Password"
+				additionalClasses = "login-field"
+				error = loginErrors.password
+			}}
+			<div>
+				<button type="button" class="login-button account-element">Log in</button>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<div class="signup-form">
+			<div class="section-top">
+				Never played before? Sign up.
+			</div>
+			<div class="section-bottom">
+				{{#if signupErrors.general}}
+					<div class="account-error">{{signupErrors.general}}</div>
+				{{/if}}
+				{{> accountField
+					id = "signup-username"
+					fieldname = "username"
+					type = "text"
+					placeholderText = "Username"
+					additionalClasses = "signup-field"
+					error = signupErrors.username
+				}}
+				{{> accountField
+					id = "signup-email"
+					fieldname = "email"
+					type = "text"
+					placeholderText = "Email"
+					additionalClasses = "signup-field"
+					error = signupErrors.email
+				}}
+				{{> accountField
+					id = "signup-password"
+					fieldname = "password"
+					type = "password"
+					placeholderText = "Password"
+					additionalClasses = "signup-field"
+					error = signupErrors.password
+				}}
+				<div>
+					<button type="button" class="signup-button account-element">Sign up</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</template>
+
+<template name="accountField">
+	<div id="{{id}}" class="{{additionalClasses}}" data-fieldname="{{fieldname}}">
+		<input class="account-element" type="{{type}}" placeholder="{{placeholderText}}">
+		<span title class="error-symbol {{#unless error}}hidden{{/unless}}">!</span>
+	</div>
+</template>

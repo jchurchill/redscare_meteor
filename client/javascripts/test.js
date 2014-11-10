@@ -3,5 +3,5 @@ Template.test.helpers({
 		var user = Meteor.user();
 		return (user && user.username) || "world";
 	},
-	indexUrl: Router.path("index")
+	indexUrl: Router.path("home")
 });
