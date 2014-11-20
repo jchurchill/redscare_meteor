@@ -51,7 +51,7 @@ Template.loginOrSignup.rendered = function() {
 		},
 		position: {
 			my: "left",
-			at: "right+15"
+			at: "right+5"
 		}
 	});
 
@@ -65,7 +65,7 @@ Template.loginOrSignup.rendered = function() {
 		},
 		position: {
 			my: "left",
-			at: "right+15"
+			at: "right+5"
 		}
 	});
 };
@@ -112,8 +112,8 @@ var signup = function(event) {
 };
 var setSignupErrors = function(error) {
 	if (error && error.length !== 'undefined' && (typeof error !== 'string')) {
-		// error is a list of error reasons
-		var errors = _.chain(error)
+		// error is a list of error reasons, or just a single error reason
+		var errors = _.chain([].concat(error))
 			.map(function(er) { return SIGNUP_ERROR_REASONS[er]; })
 			.groupByAndMap("type", function(reas) { return reas.msg; })
 			.value();
@@ -165,8 +165,8 @@ var login = function(event) {
 };
 var setLoginErrors = function(error) {
 	if (error && error.length !== 'undefined' && (typeof error !== 'string')) {
-		// error is a list of error reasons
-		var errors = _.chain(error)
+		// error is a list of error reasons, or just a single error reason
+		var errors = _.chain([].concat(error))
 			.map(function(er) { return LOGIN_ERROR_REASONS[er]; })
 			.groupByAndMap("type", function(reas) { return reas.msg; })
 			.value();

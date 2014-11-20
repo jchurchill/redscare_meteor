@@ -19,8 +19,15 @@
 	cursor: pointer;
 }
 
+.signup-field, .login-field {
+	/* for positioning of error symbol */
+	position: relative;
+}
+
 .error-symbol {
 	position: absolute;
+	top: 0;
+	right: -20px;
 	margin: 7px 2px 0 0;
 	background-color: red;
 	padding: 2px 6px;
@@ -30,12 +37,13 @@
 	color: #FFFFFF;
 	font-weight: bold;
 	font-size: 0.7em;
+	cursor: default;
 }
 
 .login-form, .signup-form {
 	margin: 0px 50px 10px auto;
 	background-color: rgba(255,255,255,0.7);
-	padding: 2px;
+	padding: 5px 24px;
 	border: 1px solid #AAAAAA;
 	border-radius: 4px;
 }
