@@ -9,10 +9,10 @@
 
 .account-menus {
 	float: right;
+	margin: 10px 0 10px 0;
 }
 .intro-text {
 	margin: 10px 350px 10px 15px;
-	height: 227px;
 	background-color: rgba(255,255,255,0.7);
 	padding: 20px;
 	border: 1px solid #AAAAAA;
