@@ -3,4 +3,21 @@
 	background-size: 100% auto;
 	background-repeat: no-repeat;
 	background-color: #000000;
+	height: 100vh;
+	padding: 20px;
+}
+
+.account-menus {
+	float: right;
+}
+.intro-text {
+	margin: 10px 350px 10px 15px;
+	height: 227px;
+	background-color: rgba(255,255,255,0.7);
+	padding: 20px;
+	border: 1px solid #AAAAAA;
+	border-radius: 4px;
+	text-align: center;
+	font-size: 36px;
+	font-family: "Helvetica";
 }

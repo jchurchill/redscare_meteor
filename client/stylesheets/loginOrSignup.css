@@ -1,7 +1,5 @@
 .login-or-signup-form {
 	text-align: center;
-	float: right;
-	margin: 20px 0 10px 10px;
 }
 
 .login-or-signup-form .account-element {
@@ -36,7 +34,7 @@
 
 .login-form, .signup-form {
 	margin: 10px 50px 10px auto;
-	background-color: rgba(255,255,255,0.8);
+	background-color: rgba(255,255,255,0.7);
 	padding: 2px;
 	border: 1px solid #AAAAAA;
 	border-radius: 4px;

@@ -1,7 +1,13 @@
 <template name="home">
 	{{#unless currentUser}}
 		<div class="login-home">
-		{{> loginOrSignup}}
+			<div class="account-menus">
+				{{> loginOrSignup}}
+			</div>
+			<div class="intro-text">
+				You never know who can be trusted.
+			</div>
+			<div class="clearfix"></div>
 		</div>
 	{{else}}
 		{{#if loggingIn}}
