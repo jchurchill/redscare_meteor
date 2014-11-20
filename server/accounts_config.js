@@ -27,7 +27,6 @@ Accounts.validateLoginAttempt(function(info) {
 	if (info.allowed) {
 		return true;
 	}
-	console.log(info);
 	// Login attempt invalid; transform meteor's error reason into one we can consume more easily
 	// Yes, we do string comparison here. There seems to be no better way to interface with these errors...
 	if (info.error.reason === "Incorrect password") {
