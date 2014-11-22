@@ -2,7 +2,7 @@
 	<a href="{{pathFor 'test'}}">Go to router test page</a>
 	{{#each games}}
 	<div>
-		{{jsonify this}}
+		<a href="{{pathFor 'game'}}">{{name}}</a>
 	</div>
 	{{/each}}
 </template>

@@ -1,4 +1,6 @@
-Games = new Mongo.Collection("games");
+Games = new Mongo.Collection("games", { 
+	transform: function(doc) { return new Game(doc); }
+});
 
 var game = {
 	// Setup information
@@ -69,6 +71,29 @@ var game = {
 	assassination: { player: 234985728, killedMerlin: false }
 };
 
+var Game = function(doc) {
+	_.extend(this, doc);
+};
+_.extend(Game.prototype, {
+	containsRole: function(role) {
+		return _.some(this.roles, function(r) { return r === role; });
+	},
+	getRound: function(roundNum) {
+		return this.rounds && this.rounds[roundNum];
+	},
+	getNomination: function(roundNum, nominationNum) {
+		var round = this.getRound(roundNum);
+		return round && round.nominations && round.nominations[nominationNum];
+	},
+	isCurrentNominationReady: function() {
+		var round = this.getRound(this.currentRound),
+			nomination = round && round.nominations
+				&& round.nominations[round.currentNominationNumber];
+		return nomination && nomination.nominees
+			&& (round.nomineeCount === nomination.nominees.length);
+	}
+});
+
 /*
 Game state progression:
 * Creation
@@ -128,7 +153,23 @@ Game state progression:
 // TODO: for testing only. delete this
 if(Meteor.isServer) {
 	Meteor.startup(function() {
-		Games.insert({ name: "my game", players: [1,2,3] });
-		Games.insert({ name: "my second game", status: "merlin got assassinated!!" });
+		Games.insert({
+			// Setup information
+			name: "Randolph Towers Game Night",
+			dateCreated: '2014-11-20 00:00:00',
+			creator: null,
+			playerCount: 6,
+			roles: [1,1,1,1,4,4],
+			players: []
+		});
+		Games.insert({
+			// Setup information
+			name: "Dustin's Foggy Bottom Game Night",
+			dateCreated: '2014-11-20 00:00:00',
+			creator: null,
+			playerCount: 6,
+			roles: [1,1,1,1,4,4],
+			players: []
+		});
 	});
 }
