@@ -1,3 +1,12 @@
 <template name="game">
-	this is the game page for {{name}}
+	this is the game page for {{name}} started by {{creator}}
+	{{#if waitingForPlayers }} 
+		{{> playersJoining}}
+	{{else}}
+		{{#if isOver}}
+			{{> gameOver}}
+		{{else}}
+			{{> round}}
+		{{/if}}
+	{{/if}}
 </template>

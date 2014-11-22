@@ -85,12 +85,62 @@ _.extend(Game.prototype, {
 		var round = this.getRound(roundNum);
 		return round && round.nominations && round.nominations[nominationNum];
 	},
+	getCurrentNominationNumber: function() {
+		var round = this.getRound(this.currentRound);
+		return round && round.currentNominationNumber;
+	},
+	getCurrentRoundSize: function() {
+		var round = this.getRound(this.currentRound);
+		return round.nomineeCount;
+	},
 	isCurrentNominationReady: function() {
 		var round = this.getRound(this.currentRound),
 			nomination = round && round.nominations
 				&& round.nominations[round.currentNominationNumber];
 		return nomination && nomination.nominees
 			&& (round.nomineeCount === nomination.nominees.length);
+	},
+	getCurrentLeader: function() {
+		var nomination = this.getNomination(this.currentRound, this.getCurrentNominationNumber());
+		return nomination && nomination.leader;
+	},
+	waitingForPlayers: function() {
+		return this.players && this.playerCount && (this.playerCount > this.players.length);
+	},
+	isCurrentUserLeader: function() {
+		return this.getCurrentLeader() == Meteor.userId();
+	},
+	isCurrentNominationVoting: function() {
+		if (this.isCurrentNominationReady()) {
+			var round = this.getRound(this.currentRound);
+			var votes = round.nominations[round.currentNominationNumber].votes;
+			return votes && (Object.keys(votes).length < this.playerCount);
+		}
+		return false;
+	},
+	hasCurrentUserVoted: function() {
+		var round = this.getRound(this.currentRound);
+		var votes = round.nominations[round.currentNominationNumber].votes;
+		return votes.hasOwnProperty(Meteor.userId());
+	},
+	isMissionHappening: function() {
+		var round = this.getRound(this.currentRound);
+		return round.nominations[round.currentNominationNumber].approved;
+	},
+	hasCurrentUserPassedOrFailed: function() {
+		if (this.isMissionHappening()) {
+			var round = this.getRound(this.currentRound);
+			var isUserOnMission = round.mission.nominees.indexOf(Meteor.userId()) > -1;
+			var hasUserVoted = round.mission.votes.hasOwnProperty(Meteor.userId());
+			return isUserOnMission && hasUserVoted;
+		}
+		return false;
+	},
+	isAssassinationAttempt: function() {
+		return (this.passedRoundsCount == 3 && this.containsRole(ROLES.MERLIN))
+	},
+	isCurrentUserAssassin: function() {
+		return Meteor.userId() == this.assassination.player;
 	}
 });
 
@@ -155,7 +205,7 @@ if(Meteor.isServer) {
 	Meteor.startup(function() {
 		Games.insert({
 			// Setup information
-			name: "Randolph Towers Game Night",
+			name: "Randolph Towers Game Night - waiting for players",
 			dateCreated: '2014-11-20 00:00:00',
 			creator: null,
 			playerCount: 6,
@@ -163,13 +213,124 @@ if(Meteor.isServer) {
 			players: []
 		});
 		Games.insert({
-			// Setup information
-			name: "Dustin's Foggy Bottom Game Night",
+			name: "Dustin's Foggy Bottom Game Night - waiting for nominations",
 			dateCreated: '2014-11-20 00:00:00',
 			creator: null,
 			playerCount: 6,
 			roles: [1,1,1,1,4,4],
-			players: []
+			players: [1,2,3,4,5,6],
+			currentRound: 1,
+			rounds: {
+				1: {
+					nomineeCount: 2,
+					currentNominationNumber: 1,
+					nominations: {
+						1: {
+							leader: "AfKNADoWLcNhmdjgv",
+							nominees: [238472394]
+						}
+					}
+				}
+			}
+		});
+		Games.insert({
+			name: "Dustin's Foggy Bottom Game Night - waiting for votes",
+			dateCreated: '2014-11-20 00:00:00',
+			creator: null,
+			playerCount: 6,
+			roles: [1,1,1,1,4,4],
+			players: [1,2,3,4,5,6],
+			currentRound: 1,
+			rounds: {
+				1: {
+					nomineeCount: 2,
+					currentNominationNumber: 1,
+					nominations: {
+						1: {
+							leader: "AfKNADoWLcNhmdjgv",
+							nominees: [238472394, 3543598],
+							votes: {
+								"238472394": true,
+								"234985728": false,
+								"2093842980": false
+							},
+							approved: false
+						}
+					}
+				}
+			}
+		});
+		Games.insert({
+			name: "Dustin's Foggy Bottom Game Night - mission happening",
+			dateCreated: '2014-11-20 00:00:00',
+			creator: null,
+			playerCount: 6,
+			roles: [1,1,1,1,4,4],
+			players: [1,2,3,4,5,6],
+			currentRound: 1,
+			rounds: {
+				1: {
+					nomineeCount: 2,
+					currentNominationNumber: 1,
+					nominations: {
+						1: {
+							leader: "AfKNADoWLcNhmdjgv",
+							nominees: [238472394, 3543598],
+							votes: {
+								"238472394": true,
+								"234985728": true,
+								"2093842980": true,
+								"209384230": true,
+								"2093842": true,
+								"2093": true
+							},
+							approved: true
+						}
+					},
+					mission: {
+						nominationNumber: 1,
+						nominees: [238472394, 3543598],
+						votes: {}
+					}
+				}
+			}
+		});
+		Games.insert({
+			name: "Dustin's Foggy Bottom Game Night - assassination",
+			dateCreated: '2014-11-20 00:00:00',
+			creator: null,
+			playerCount: 6,
+			roles: [1,1,1,1,2,4],
+			players: [1,2,3,4,5,6],
+			currentRound: 1,
+			passedRoundsCount: 3,
+			rounds: {
+				1: {
+					nomineeCount: 2,
+					currentNominationNumber: 1,
+					nominations: {
+						1: {
+							leader: "AfKNADoWLcNhmdjgv",
+							nominees: [238472394, 3543598],
+							votes: {
+								"238472394": true,
+								"234985728": true,
+								"2093842980": true,
+								"209384230": true,
+								"2093842": true,
+								"2093": true
+							},
+							approved: true
+						}
+					},
+					mission: {
+						nominationNumber: 1,
+						nominees: [238472394, 3543598],
+						votes: {}
+					}
+				}
+			},
+			assassination: {player: "AfKNADoWLcNhmdjgv"}
 		});
 	});
 }
