@@ -1,7 +1,7 @@
 <template name="dashboard">
 	<a href="{{pathFor 'test'}}">Go to router test page</a>
 	{{#each games}}
-	<div>
+	<div class="game">
 		<a href="{{pathFor 'game'}}">{{name}}</a>
 	</div>
 	{{/each}}
