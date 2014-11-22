@@ -1,0 +1,48 @@
+<template name="create_game">
+	<div class="create-game-input">
+		Name: <input type="text" name="name"/>
+	</div>
+	<div class="create-game-input">
+		Players:
+		<select class="player-count-select" name="playerCount">
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+		</select>
+	</div>
+	<div class="create-game-input">
+		<label>
+			<input type="checkbox" class="role-option" name="merlin-assassin"
+				disabled="{{disableMerlinAssassin}}"/>
+			Include merlin and assassin?
+		</label>
+	</div>
+	<div class="create-game-input">
+		<label>
+			<input type="checkbox" class="role-option" name="percival-morgana"
+				disabled="{{disablePercivalMorgana}}"/>
+			Include percival and morgana?
+		</label>
+	</div>
+	<div class="create-game-input">
+		<label>
+			<input type="checkbox" class="role-option" name="mordred"
+				disabled="{{disableMordred}}"/>
+			Include mordred?
+		</label>
+	</div>
+	<div class="create-game-input">
+		<label>
+			<input type="checkbox" class="role-option" name="oberon"
+				disabled="{{disableOberon}}"/>
+			Include oberon?
+		</label>
+	</div>
+	<div class="create-game-input">
+		<button class="create-game-submit">Create game</button>
+		(Doesn't work yet)
+	</div>
+</template>
