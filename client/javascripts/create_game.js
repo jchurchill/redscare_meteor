@@ -62,11 +62,48 @@ Template.create_game.events({
 	"change input.role-option": function(e) {
 		updateAllowedSpecialRoles();
 	},
-	"change select.player-count-select": function(e) {
+	"change #create-game-playercount": function(e) {
 		resetAllRoles();	
 	},
-	"button.create-game-submit" : function(e) {
-		console.log("submit", e);
+	"click button.create-game-submit" : function(e) {
+		var name = $("#create-game-name").val();
+		var playerCount = parseInt($("#create-game-playercount").val(), 10);
+		var selectedRolesToInclude = _.chain(ROLE_OPTIONS)
+			.filter(function(r) { return $(roleInputSelector(r.name)).is(":checked"); })
+			.mapMany(_.property("roles"))
+			.value();
+		var numSelectedGoodRoles = _.filter(selectedRolesToInclude, _.method("isGood")).length;
+		var numSelectedEvilRoles = _.filter(selectedRolesToInclude, _.method("isEvil")).length;
+		var setup = GAME_PRESETS[playerCount];
+		var roleIds = [];
+		var createdGameId;
+		if (!setup) {
+			return;
+		}
+
+		// Construct the final set of roles for the game - 
+		// all special roles selected, filling in gaps with normal good/evil
+		// based on specified player count
+		roleIds = roleIds.concat(_.pluck(selectedRolesToInclude, "id"));
+		_.times(setup.goods - numSelectedGoodRoles, function() {
+			roleIds.push(ROLES.NORMAL_GOOD.id);
+		});
+		_.times(setup.evils - numSelectedEvilRoles, function() {
+			roleIds.push(ROLES.NORMAL_EVIL.id);
+		});
+
+		Meteor.call("createGame", {
+			name: name,
+			playerCount: playerCount,
+			roles: roleIds
+		}, function(err, result) {
+			if (err) {
+				console.log(err);
+			}
+			else {
+				Router.go("game", { _id: result });
+			}
+		});
 	}
 });
 
@@ -78,7 +115,7 @@ Template.create_game.rendered = function() {
 // TODO: clean up the below
 
 var roleInputSelector = function(role_option) {
-	return "input[name='" + role_option.name + "']";
+	return "#" + role_option.name;
 };
 
 var setAllowed = function(role_option, allowed) {
