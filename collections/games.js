@@ -127,10 +127,11 @@ Game.static = {
 		var roleIdMap = ROLES.getRoleIdMap(),
 			roles = _.map(roleIds, function(r) { return roleIdMap[r]; }),
 			allegianceCounts = _.chain(roles)
-				.groupByAndMap(_.property("allegiance"), _.property("length"))
+				.groupBy("allegiance")
+				.mapProperties("length")
 				.value(),
-			numGoods = allegianceCounts[ALLEGIANCE.GOOD].length,
-			numEvils = allegianceCounts[ALLEGIANCE.EVIL].length;
+			numGoods = allegianceCounts[ALLEGIANCE.GOOD] || 0,
+			numEvils = allegianceCounts[ALLEGIANCE.EVIL] || 0;
 		// All roles must be recognized - this is true if #evils + #goods = all roles
 		if (!((numGoods + numEvils) === roleIds.length)) {
 			return false;

@@ -1,17 +1,17 @@
 <template name="home">
-	{{#unless currentUser}}
-		<div class="login-home">
-			<div class="account-menus">
-				{{> loginOrSignup}}
-			</div>
-			<div class="intro-text">
-				Welcome to the Red Scare.
-				<br/>
-				Who will you trust?
-			</div>
-			<div class="clearfix"></div>
+	{{> Template.dynamic template=templateToRender }}
+</template>
+
+<template name="loginHome">
+	<div class="login-home">
+		<div class="account-menus">
+			{{> loginOrSignup}}
 		</div>
-	{{else}}
-		{{> dashboard}}
-	{{/unless}}
+		<div class="intro-text">
+			Welcome to the Red Scare.
+			<br/>
+			Who will you trust?
+		</div>
+		<div class="clearfix"></div>
+	</div>
 </template>
