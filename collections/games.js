@@ -149,6 +149,15 @@ Game.static = {
 			return false;
 		}
 		// Finally, verify that no special role appears more than once
+		var duplicateSpecialRoles = _.chain(roles)
+			.filter(_.property("unique"))
+			.groupBy("id")
+			.mapProperties("length")
+			.any(function(c) { return c > 1; })
+			.value();
+		if (duplicateSpecialRoles) {
+			return false;
+		}
 		return true;
 	},
 };
