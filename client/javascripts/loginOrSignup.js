@@ -1,23 +1,25 @@
 // Constants
-var SESSION_PREFIX = "LoginOrSignup.";
-var SIGNUP_PREFIX = SESSION_PREFIX + "signup.";
-var LOGIN_PREFIX = SESSION_PREFIX + "login."
-
-var SIGNUP_ERRORS = SIGNUP_PREFIX + "errors";
-var LOGIN_ERRORS = LOGIN_PREFIX + "errors";
+var SESSION = {
+	LOCAL: Session.namespace("login-or-signup")
+};
+SESSION.signup = SESSION.LOCAL.namespace("signup");
+SESSION.login = SESSION.LOCAL.namespace("login");
+SESSION.keys = {
+	errors: "errors"
+};
 
 Meteor.startup(function() {
-	Session.set(SIGNUP_ERRORS, {});
-	Session.set(LOGIN_ERRORS, {});
+	SESSION.signup.setDefault(SESSION.keys.errors, {});
+	SESSION.login.setDefault(SESSION.keys.errors, {});
 });
 
 // Template setup
 Template.loginOrSignup.helpers({
 	signupErrors: function() {
-		return Session.get(SIGNUP_ERRORS);
+		return SESSION.signup.get(SESSION.keys.errors);
 	},
 	loginErrors: function() {
-		return Session.get(LOGIN_ERRORS);
+		return SESSION.login.get(SESSION.keys.errors);
 	}
 });
 
@@ -44,7 +46,7 @@ Template.loginOrSignup.rendered = function() {
 	$(".login-form .error-symbol").tooltip({
 		content: function() {
 			var fieldname = $(this).parent("div").attr("data-fieldname");
-				errors = Session.get(LOGIN_ERRORS)[fieldname],
+				errors = SESSION.login.get(SESSION.keys.errors)[fieldname],
 				tooltip = errors.join("<br>");
 			// "this" is the element that has the tooltip
 			return tooltip;
@@ -58,7 +60,7 @@ Template.loginOrSignup.rendered = function() {
 	$(".signup-form .error-symbol").tooltip({
 		content: function() {
 			var fieldname = $(this).parent("div").attr("data-fieldname");
-				errors = Session.get(SIGNUP_ERRORS)[fieldname],
+				errors = SESSION.signup.get(SESSION.keys.errors)[fieldname],
 				tooltip = errors.join("<br>");
 			// "this" is the element that has the tooltip
 			return tooltip;
@@ -105,29 +107,34 @@ var signup = function(event) {
 			if (error) {
 				setSignupErrors(error.reason);
 			} else {
-				Session.set(SIGNUP_ERRORS, {});
+				SESSION.signup.set(SESSION.keys.errors, {});
 			}
 		});
 	}
 };
 var setSignupErrors = function(error) {
+	var setSessionErrors, errors;
+
+	setSessionErrors = function(err) {
+		SESSION.signup.set(SESSION.keys.errors, err);
+	};
+
 	if (error && error.length !== 'undefined' && (typeof error !== 'string')) {
 		// error is a list of error reasons, or just a single error reason
 		var errors = _.chain([].concat(error))
 			.map(function(er) { return SIGNUP_ERROR_REASONS[er]; })
 			.groupByAndMap("type", function(reas) { return reas.msg; })
 			.value();
-		Session.set(SIGNUP_ERRORS, errors);
+		setSessionErrors(errors);
 	}
 	else if (typeof error === 'string') {
 		// error is just a simple message
-		Session.set(SIGNUP_ERRORS, { general: error });
+		setSessionErrors({ general: error });
 	}
 	else {
-		Session.set(SIGNUP_ERRORS, { general: "An unknown error occurred." });
+		setSessionErrors({ general: "An unknown error occurred." });
 	}
 };
-
 
 
 var LOGIN_ERROR_REASONS = {
@@ -158,30 +165,36 @@ var login = function(event) {
 			if (error) {
 				setLoginErrors(error.reason);
 			} else {
-				Session.set(LOGIN_ERRORS, {});
+				SESSION.login.set(SESSION.keys.errors, {});
 			}
 		});
 	}
 };
 var setLoginErrors = function(error) {
+	var setSessionErrors, errors;
+
+	setSessionErrors = function(err) {
+		SESSION.login.set(SESSION.keys.errors, err);
+	};
+
 	if (error && error.length !== 'undefined' && (typeof error !== 'string')) {
 		// error is a list of error reasons, or just a single error reason
 		var errors = _.chain([].concat(error))
 			.map(function(er) { return LOGIN_ERROR_REASONS[er]; })
 			.groupByAndMap("type", function(reas) { return reas.msg; })
 			.value();
-		Session.set(LOGIN_ERRORS, errors);
+		setSessionErrors(errors);
 	}
 	else if (typeof error === 'string') {
 		// error is just a simple message
-		Session.set(LOGIN_ERRORS, { general: error });
+		setSessionErrors({ general: error });
 	}
 	else {
-		Session.set(LOGIN_ERRORS, { general: "An unknown error occurred." });
+		setSessionErrors({ general: "An unknown error occurred." });
 	}
 };
 
 var clearAllErrors = function() {
-	Session.set(LOGIN_ERRORS, {});
-	Session.set(SIGNUP_ERRORS, {});
+	SESSION.signup.set(SESSION.keys.errors, {});
+	SESSION.login.set(SESSION.keys.errors, {});
 };
