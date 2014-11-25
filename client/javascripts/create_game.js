@@ -1,4 +1,4 @@
-ROLE_OPTIONS = {
+var ROLE_OPTIONS = {
 	MERLIN_ASSASSIN: {
 		name: "merlin-assassin",
 		good: 1,
@@ -29,32 +29,21 @@ ROLE_OPTIONS.PERCIVAL_MORGANA.requires = [ROLE_OPTIONS.MERLIN_ASSASSIN];
 ROLE_OPTIONS.MORDRED.requires = [ROLE_OPTIONS.MERLIN_ASSASSIN];
 ROLE_OPTIONS.OBERON.requires = [];
 
-SESSION_PREFIX = "create_game";
-DOT = ".";
-SESSION_KEYS = {
-	ALLOWED: SESSION_PREFIX + DOT + "allowed"
-};
-ROLE_OPTIONS.MERLIN_ASSASSIN.isDisabledSessionKey =
-	SESSION_KEYS.ALLOWED + DOT + ROLE_OPTIONS.MERLIN_ASSASSIN.name;
-ROLE_OPTIONS.PERCIVAL_MORGANA.isDisabledSessionKey =
-	SESSION_KEYS.ALLOWED + DOT + ROLE_OPTIONS.PERCIVAL_MORGANA.name;
-ROLE_OPTIONS.MORDRED.isDisabledSessionKey =
-	SESSION_KEYS.ALLOWED + DOT + ROLE_OPTIONS.MORDRED.name;
-ROLE_OPTIONS.OBERON.isDisabledSessionKey =
-	SESSION_KEYS.ALLOWED + DOT + ROLE_OPTIONS.OBERON.name;
+var CREATE_GAME_SESSION = Session.namespace("create_game");
+var SESSION_ROLE_OPTIONS_ALLOWED = CREATE_GAME_SESSION.namespace("role_options_allowed");
 
 Template.create_game.helpers({
 	disableMerlinAssassin: function() {
-		return !!Session.get(ROLE_OPTIONS.MERLIN_ASSASSIN.isDisabledSessionKey);
+		return !!SESSION_ROLE_OPTIONS_ALLOWED.get(ROLE_OPTIONS.MERLIN_ASSASSIN.name);
 	},
 	disablePercivalMorgana: function() {
-		return !!Session.get(ROLE_OPTIONS.PERCIVAL_MORGANA.isDisabledSessionKey);
+		return !!SESSION_ROLE_OPTIONS_ALLOWED.get(ROLE_OPTIONS.PERCIVAL_MORGANA.name);
 	},
 	disableMordred: function() {
-		return !!Session.get(ROLE_OPTIONS.MORDRED.isDisabledSessionKey);
+		return !!SESSION_ROLE_OPTIONS_ALLOWED.get(ROLE_OPTIONS.MORDRED.name);
 	},
 	disableOberon: function() {
-		return !!Session.get(ROLE_OPTIONS.OBERON.isDisabledSessionKey);
+		return !!SESSION_ROLE_OPTIONS_ALLOWED.get(ROLE_OPTIONS.OBERON.name);
 	}
 });
 
@@ -119,12 +108,11 @@ var roleInputSelector = function(role_option) {
 };
 
 var setAllowed = function(role_option, allowed) {
-	var isDisabled = role_option.isDisabledSessionKey;
 	if (allowed) {
-		Session.set(isDisabled, false);
+		SESSION_ROLE_OPTIONS_ALLOWED.set(role_option.name, false);
 	}
 	else {
-		Session.set(isDisabled, true);
+		SESSION_ROLE_OPTIONS_ALLOWED.set(role_option.name, true);
 		$(roleInputSelector(role_option)).attr("checked", false);
 	}
 };
