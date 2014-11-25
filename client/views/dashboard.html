@@ -1,5 +1,5 @@
 <template name="dashboard">	
-	<a href="{{pathFor 'create_game'}}" class="start-game">Start a new game</a>
+	<a href="{{pathFor 'create_game'}}" class="start-game primary-link">Start a new game</a>
 	{{#each games}}
 	<div class="game">
 		<a href="{{pathFor 'game'}}">{{name}}</a>

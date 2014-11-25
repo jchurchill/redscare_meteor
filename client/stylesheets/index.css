@@ -2,6 +2,39 @@ body {
 	margin: 0;
 }
 
+button {
+	padding: 5px;
+	border-radius: 3px;
+	border: 1px solid #DD84AA;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.38),0 3px 3px rgba(0, 0, 0, 0.32);
+	text-shadow: 0 -1px rgba(0, 0, 0, 0.11);
+}
+
+a {
+	text-decoration: initial;
+}
+.primary-button {
+	background-color: #CC0422;
+	color: #FFCCCC;
+	cursor: pointer;
+}
+.primary-link, .primary-link:visited {
+	font-weight: bold;
+	color: #CC0422;
+}
+
+.secondary-button {
+	background-color: #FFCCCC;
+	color: #CC0422;
+	font-size: 0.9em;
+	cursor: pointer;
+}
+.secondary-link, .secondary-link:visited {
+	color: #AA3366;
+	font-size: 0.9em;
+}
+.secondary-link:visited {}
+
 .hidden {
 	visibility: hidden;
 	display: none;

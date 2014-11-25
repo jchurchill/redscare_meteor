@@ -1,4 +1,9 @@
 <template name="create_game">
+	<div class="back-link">
+		<a class="secondary-link" href="{{pathFor 'home'}}">
+			&lt; Back to dashboard
+		</a>
+	</div>
 	<div class="create-game-input">
 		Name: <input id="create-game-name" type="text" name="name"/>
 	</div>
@@ -42,6 +47,8 @@
 		</label>
 	</div>
 	<div class="create-game-input">
-		<button class="create-game-submit">Create game</button>
+		<button class="create-game-submit primary-button">
+			Create game
+		</button>
 	</div>
 </template>
