@@ -3,25 +3,25 @@ var ROLE_OPTIONS = {
 		name: "merlin-assassin",
 		good: 1,
 		evil: 1,
-		roles: [ROLES.MERLIN, ROLES.ASSASSIN]
+		roles: [CONSTANTS.roles.merlin, CONSTANTS.roles.assassin]
 	},
 	PERCIVAL_MORGANA: {
 		name: "percival-morgana",
 		good: 1,
 		evil: 1,
-		roles: [ROLES.PERCIVAL, ROLES.MORGANA]
+		roles: [CONSTANTS.roles.percival, CONSTANTS.roles.morgana]
 	},
 	MORDRED: {
 		name: "mordred",
 		good: 0,
 		evil: 1,
-		roles: [ROLES.MORDRED]
+		roles: [CONSTANTS.roles.mordred]
 	},
 	OBERON: {
 		name: "oberon",
 		good: 0,
 		evil: 1,
-		roles: [ROLES.OBERON]
+		roles: [CONSTANTS.roles.oberon]
 	},
 };
 ROLE_OPTIONS.MERLIN_ASSASSIN.requires = [];
@@ -64,7 +64,7 @@ Template.create_game.events({
 			.value();
 		var numSelectedGoodRoles = _.filter(selectedRolesToInclude, _.method("isGood")).length;
 		var numSelectedEvilRoles = _.filter(selectedRolesToInclude, _.method("isEvil")).length;
-		var setup = GAME_PRESETS[playerCount];
+		var setup = CONSTANTS.gamePresets[playerCount];
 		var roleIds = [];
 		var createdGameId;
 		if (!setup) {
@@ -76,10 +76,10 @@ Template.create_game.events({
 		// based on specified player count
 		roleIds = roleIds.concat(_.pluck(selectedRolesToInclude, "id"));
 		_.times(setup.goods - numSelectedGoodRoles, function() {
-			roleIds.push(ROLES.NORMAL_GOOD.id);
+			roleIds.push(CONSTANTS.roles.normalGood.id);
 		});
 		_.times(setup.evils - numSelectedEvilRoles, function() {
-			roleIds.push(ROLES.NORMAL_EVIL.id);
+			roleIds.push(CONSTANTS.roles.normalEvil.id);
 		});
 
 		CreateGameController.call("create", {
@@ -165,9 +165,9 @@ var disableDependentRoles = function() {
 var disableRolesPreventedByPlayerCount = function() {
 	var playerCount = $("select.player-count-select").val(),
 		currentGoodCount = countSpecialGoodRolesSelected(),
-		goodCountAllowed = GAME_PRESETS[playerCount].goods,
+		goodCountAllowed = CONSTANTS.gamePresets[playerCount].goods,
 		currentEvilCount = countSpecialEvilRolesSelected(),
-		evilCountAllowed = GAME_PRESETS[playerCount].evils,
+		evilCountAllowed = CONSTANTS.gamePresets[playerCount].evils,
 		rolesToDisable = rolesWhere(function(r) {
 			return (r.good + currentGoodCount > goodCountAllowed) && !isRoleChecked(r);
 		})

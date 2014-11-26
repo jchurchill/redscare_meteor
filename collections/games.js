@@ -10,7 +10,7 @@ _.extend(Game.prototype, {
 		return !!this.dateAbandoned;
 	},
 	containsRole: function(role) {
-		return _.some(this.roles, function(r) { return r === role; });
+		return _.some(this.roles, function(r) { return r === role.id; });
 	},
 	getRound: function(roundNum) {
 		return this.rounds && this.rounds[roundNum];
@@ -71,7 +71,7 @@ _.extend(Game.prototype, {
 		return false;
 	},
 	isAssassinationAttempt: function() {
-		return (this.passedRoundsCount == 3 && this.containsRole(ROLES.MERLIN))
+		return (this.passedRoundsCount == 3 && this.containsRole(CONSTANTS.roles.merlin))
 	},
 	isCurrentUserAssassin: function() {
 		return Meteor.userId() == this.assassination.player;
@@ -85,7 +85,7 @@ var game = {
 	dateAbandoned: null,
 	creator: 348579892,
 	playerCount: 6,
-	roles: [1,1,2,2,2,3], // see ROLES enum in game_presets
+	roles: [1,1,2,2,2,3], // see CONSTANTS.roles enum in constants.js
 	// Filled in after game begins
 	players: [238472394, 234985728, 2093842980 /* and 3 more*/],
 	playerRoles: { 
