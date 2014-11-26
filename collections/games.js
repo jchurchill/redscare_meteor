@@ -148,7 +148,7 @@ _.extend(Game.prototype, {
 		return nomination && nomination.leader;
 	},
 	waitingForPlayers: function() {
-		return this.players && this.playerCount && (this.playerCount > this.players.length);
+		return !this.currentRound;
 	},
 	isCurrentUserLeader: function() {
 		return this.getCurrentLeader() == Meteor.userId();
@@ -370,15 +370,6 @@ Game state progression:
 if(Meteor.isServer) {
 	if (Games.find().count() === 0) {
 		Meteor.startup(function() {
-			Games.insert({
-				// Setup information
-				name: "Randolph Towers Game Night - waiting for players",
-				dateCreated: '2014-11-20 00:00:00',
-				creator: null,
-				playerCount: 6,
-				roles: [1,1,1,1,4,4],
-				players: []
-			});
 			Games.insert({
 				name: "Dustin's Foggy Bottom Game Night - waiting for nominations",
 				dateCreated: '2014-11-20 00:00:00',
