@@ -6,40 +6,5 @@
 	<div>Nomination Leader: {{getCurrentLeader}}</div>
 	<br/>
 	<br/>
-	
-	{{#if isAssassinationAttempt}}
-		{{#if isCurrentUserAssassin}}
-			<div>Please choose a victim...</div>
-		{{else}}
-			<div>Good people had 3 successful missions. There's an assassion though!!!!</div>
-		{{/if}}
-	{{else}}
-	
-		{{#unless isCurrentNominationReady}}
-			{{#if isCurrentUserLeader}}
-				<div>Please nominate people for the mission</div>
-			{{else}}
-				<div>Waiting for leader to nominate</div>
-			{{/if}}
-			<div>Current Nominees: </div>
-		{{/unless}}
-
-		{{#if isCurrentNominationVoting}}
-			{{#if hasCurrentUserVoted}}
-				<div>Please vote for this mission</div>
-			{{else}}
-				<div>Waiting for others to vote</div>
-			{{/if}}
-		{{/if}}
-		
-		{{#if isMissionHappening}}
-			{{#if hasCurrentUserPassedOrFailed}}
-				<div>Please submit a pass or fail!</div>
-			{{else}}
-				<div>Waiting for the mission to complete...</div>
-			{{/if}}
-		{{/if}}
-	
-	{{/if}}
-
+	{{> Template.dynamic template=templateToRender}}
 </template>

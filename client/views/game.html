@@ -2,16 +2,9 @@
 	<div class="back-link">
 		<a href="{{pathFor 'home'}}" class="secondary-link">&lt; Back to dashboard</a>
 	</div>
+	
 	<div class="game-info">
-		this is the game page for {{name}} started by {{creator}}
-		{{#if waitingForPlayers }} 
-			{{> playersJoining}}
-		{{else}}
-			{{#if isOver}}
-				{{> gameOver}}
-			{{else}}
-				{{> round}}
-			{{/if}}
-		{{/if}}
+		This is the game page for {{name}} started by {{creator}}
 	</div>
+	{{> Template.dynamic template=templateToRender }}
 </template>

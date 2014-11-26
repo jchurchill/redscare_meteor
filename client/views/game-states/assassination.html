@@ -1,0 +1,11 @@
+<Template name="assassination">
+	{{#if isCurrentUserAssassin}}
+			<div>Please choose a victim...</div>
+			<select name="assassination-target">
+				<option>a</option>
+				<option>b</option>
+			</select>
+		{{else}}
+			<div>Good people had 3 successful missions. There's an assassion though!!!</div>
+	{{/if}}
+</Template>

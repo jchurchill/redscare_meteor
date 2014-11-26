@@ -74,7 +74,19 @@ _.extend(Game.prototype, {
 		return (this.passedRoundsCount == 3 && this.containsRole(CONSTANTS.roles.merlin))
 	},
 	isCurrentUserAssassin: function() {
-		return Meteor.userId() == this.assassination.player;
+		// return Meteor.userId() == this.assassination.player;
+
+		// JJ TEMP: return true for development purposes
+		return true;
+	},
+
+	getUsersWhoAreResistance: function() {
+		// JJ TODO: CHECK IF THE GAME IS OVER AND THE CURRENT USER IS THE ASSASSIN FIRST
+		// return this.players.filter(function(p){
+		// 	return (this.playerRoles[p] == ROLES.NORMAL_GOOD) ||
+		// 		(this.playerRoles[p] == ROLES.MERLIN) ||
+		// 		(this.playerRoles[p] == ROLES.PERCIVAL);
+		// }, this);
 	}
 });
 
@@ -290,7 +302,7 @@ if(Meteor.isServer) {
 						}
 					}
 				}
-			});
+			});	
 			Games.insert({
 				name: "Dustin's Foggy Bottom Game Night - assassination",
 				dateCreated: '2014-11-20 00:00:00',
@@ -298,6 +310,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,2,4],
 				players: [1,2,3,4,5,6],
+				playerRoles: {1: 1, 2: 1, 3: 1, 4: 1, 5:2, 6:4},
 				currentRound: 1,
 				passedRoundsCount: 3,
 				rounds: {
@@ -308,25 +321,12 @@ if(Meteor.isServer) {
 							1: {
 								leader: "AfKNADoWLcNhmdjgv",
 								nominees: [238472394, 3543598],
-								votes: {
-									"238472394": true,
-									"234985728": true,
-									"2093842980": true,
-									"209384230": true,
-									"2093842": true,
-									"2093": true
-								},
-								approved: true
+								votes: {}
 							}
-						},
-						mission: {
-							nominationNumber: 1,
-							nominees: [238472394, 3543598],
-							votes: {}
 						}
-					}
-				},
-				assassination: {player: "AfKNADoWLcNhmdjgv"}
+					},
+					assassination: {player: "AfKNADoWLcNhmdjgv"}
+				}
 			});
 		});
 	}
