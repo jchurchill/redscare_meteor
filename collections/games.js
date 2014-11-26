@@ -2,13 +2,6 @@ Games = new Mongo.Collection("games", {
 	transform: function(doc) { return new Game(doc); }
 });
 
-// TODO: remove insecure instead of having this
-Games.allow({
-	insert: function() { return false; }, // Meteor.methods only
-	update: function() { return false; }, // Meteor.methods only
-	remove: function() { return false; } // Only soft deletes (Meteor.methods)
-})
-
 // TODO: We're going to have to find some way to organize any allow / deny logic,
 // TODO: along with the (related) Meteor.methods that affect games.
 // TODO: I don't like how hard it is to use allow/deny on updates - it will
