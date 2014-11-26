@@ -31,6 +31,7 @@ ROLE_OPTIONS.OBERON.requires = [];
 
 var CREATE_GAME_SESSION = Session.namespace("create_game");
 var SESSION_ROLE_OPTIONS_ALLOWED = CREATE_GAME_SESSION.namespace("role_options_allowed");
+var CreateGameController = MeteorController.namespace("create_game");
 
 Template.create_game.helpers({
 	disableMerlinAssassin: function() {
@@ -81,7 +82,7 @@ Template.create_game.events({
 			roleIds.push(ROLES.NORMAL_EVIL.id);
 		});
 
-		Meteor.call("createGame", {
+		CreateGameController.call("create", {
 			name: name,
 			playerCount: playerCount,
 			roles: roleIds
