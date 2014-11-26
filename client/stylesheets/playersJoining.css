@@ -1,0 +1,23 @@
+.waiting-for-players-title {
+	margin-left: 10px;
+}
+.join-buttons-section {
+	margin: 10px;
+}
+.players-section {
+	margin: 10px;
+	margin-top: 20px;
+}
+.joined-player {
+	padding: 5px;
+	display: inline-block;
+	height: 100px;
+	width: 100px;
+	border: 1px solid black;
+	text-align: center;
+	margin: 5px;
+	background-color: #CC9966;
+}
+.player-card {
+	padding: 5px;
+}

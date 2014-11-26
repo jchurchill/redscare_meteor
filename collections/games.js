@@ -2,19 +2,19 @@ Games = new Mongo.Collection("games", {
 	transform: function(doc) { return new Game(doc); }
 });
 
+// TODO: remove insecure instead of having this
 Games.allow({
-	insert: function() { return false; }, // Meteor.methods - createGame
-	update: function() { return true; }, // validated by deny rules
-	remove: function() { return false; } // Only soft deletes
+	insert: function() { return false; }, // Meteor.methods only
+	update: function() { return false; }, // Meteor.methods only
+	remove: function() { return false; } // Only soft deletes (Meteor.methods)
 })
 
-// TODO: We're going to have to find some way to organize the allow / deny logic,
+// TODO: We're going to have to find some way to organize any allow / deny logic,
 // TODO: along with the (related) Meteor.methods that affect games.
 // TODO: I don't like how hard it is to use allow/deny on updates - it will
 // TODO: probably be a nightmare to validate every type of state transition
 // TODO: for a game. I feel like Meteor.methods is the way to go in general.
-// TODO: Of course, a mix is a fine option too, and perhaps we should find a
-// TODO: way to organize a mix of Meteor.methods / allow/deny as well.
+// TODO: Of course, a mix is a fine option too.
 // TODO: My thinking is that in general, allow/deny is great for simple documents
 // TODO: that are owned by a particular user, but beyond that too much validation
 // TODO: is needed, leading you to Meteor.methods. Meteor.methods are like good
@@ -31,39 +31,6 @@ Games.allow({
 // TODO: the spot, and both get to join, leading to an invalid state. This begs a more
 // TODO: general question - how do you do atomic database updates with meteor+mongo?
 // TODO: Probably something I could look up on stack overflow once I'm not on a bus to NYC
-
-// Don't allow players to join if they've already joined
-// Don't allow players to join if the game is at max capacity
-// Only allow players to join or leave a game themselves, not others
-// Don't allow the game creator to leave his own game
-Games.deny({
-	update: function(userId, doc, fields, modifier) {
-		if (!_.contains(fields, "players")) {
-			return false;
-		}
-		// Only push / pull are allowed on this
-		try {
-			check(modifier, {
-				$push: Match.Optional({
-					players: Match.Where(function(p) {
-						return p === userId
-							&& doc.players.length < doc.playerCount
-							&& !_.contains(doc.players, p);
-					})
-				}),
-				$pull: Match.Optional({
-					players: Match.Where(function(p) {
-						return p === userId && p !== doc.creator;
-					})
-				})
-			});
-		} catch (e) {
-			return true; // deny if match error was hit
-		}
-		return false;
-	},
-	fetch: ['players', 'creator', 'playerCount']
-});
 
 Meteor.methods({
 	createGame: function(doc) {
@@ -100,7 +67,10 @@ Meteor.methods({
 	abandonGame: function(gameId) {
 		var game = Games.findOne(gameId, {
 			fields: { creator: 1 }
-		})
+		});
+		if (!game) {
+			throw new Meteor.Error(403, "Game not found");
+		}
 		// Check that the current user is the creator of the game
 		if (Meteor.userId() !== game.creator) {
 			throw new Meteor.Error(403, "User who is not game creator cannot abandon it.");
@@ -108,6 +78,41 @@ Meteor.methods({
 		Games.update(gameId, {
 			$set: { dateAbandoned: new Date() }
 		});
+	},
+	addPlayerToGame: function(gameId, userId) {
+		var game = Games.findOne(gameId, {
+			fields: { players: 1, playerCount: 1 }
+		});
+		if (userId !== Meteor.userId()) {
+			throw new Meteor.Error(403, "Cannot add a player other than yourself to a game.");
+		}
+		if (game.players.length >= game.playerCount) {
+			throw new Meteor.Error(403, "Cannot add a player to a game at full capacity.");
+		}
+		if (_.contains(game.players, userId)) {
+			throw new Meteor.Error(403, "Cannot add a player to a game he is already in.");
+		}
+		Games.update(gameId, {
+			$push: { players: userId }
+		});
+	},
+	removePlayerFromGame: function(gameId, userId) {
+		var game = Games.findOne(gameId, {
+			fields: { creator: 1 }
+		});
+		if (!game) {
+			throw new Meteor.Error(403, "Game not found");
+		}
+		if (userId !== Meteor.userId()) {
+			throw new Meteor.Error(403, "Cannot remove a player other than yourself from a game.");
+		}
+		if (userId === game.creator) {
+			throw new Meteor.Error(403, "The creator of a game cannot leave it.");
+		}
+		// TODO validation: don't allow removal of player from in-progress game
+		Games.update(gameId, {
+			$pull: { players: userId }
+		})
 	}
 });
 

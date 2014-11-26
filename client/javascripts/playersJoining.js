@@ -5,13 +5,19 @@ SESSION.keys = {
 
 Template.playersJoining.helpers({
 	currentlyJoinedPlayers: function() {
-		return Meteor.users.find(
+		var sortOrder = _.chain(this.players)
+			.invert()
+			.mapProperties(function(i) { return parseInt(i,10); })
+			.value();
+		var players = Meteor.users.find(
 			{
 				_id: { $in: this.players }
 			},
 			{
 				fields: { username: 1 }
 			}).fetch();
+		// Sort returned players in the same order that they are stored in the game doc
+		return _.sortBy(players, function(p) { return sortOrder[p._id]; });
 	},
 	isCurrentUserJoined: function() {
 		return helpers.isCurrentUserJoined(this);
@@ -29,27 +35,20 @@ Template.playersJoining.helpers({
 
 Template.playersJoining.events({
 	"click .join-game-button": function() {
-		// TODO: validate
-		Games.update(this._id, {
-			$push: { players: Meteor.userId() }
-		})
+		Meteor.call("addPlayerToGame", this._id, Meteor.userId());
 	},
 	"click .leave-game-button": function() {
-		// TODO: validate
-		Games.update(this._id, {
-			$pull: { players: Meteor.userId() }
-		})
+		Meteor.call("removePlayerFromGame", this._id, Meteor.userId());
 	},
 	// TODO: move this button to the game template - it's relevant at ALL times,
 	// TODO: not just when players are joining
 	"click .abandon-game-button": function() {
+		var afterAbandon = function() {
+			Router.go("home");
+		};
 		// TODO: use jquery dialog or something
 		if(confirm("Are you sure?")) {
-			Meteor.call("abandonGame",
-				this._id,
-				function() {
-					Router.go("home");
-				});
+			Meteor.call("abandonGame", this._id, afterAbandon);
 		}
 	}
 });

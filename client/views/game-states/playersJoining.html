@@ -1,32 +1,43 @@
 <template name="playersJoining">
 	<div>
-		<div>
+		<h3 class="waiting-for-players-title">
 			Waiting for players to join ({{players.length}} / {{playerCount}})
-		</div>
-		<button class="join-game-button primary-button"
-			disabled="{{#unless canJoinGame}}disabled{{/unless}}">
-			{{#if isCurrentUserJoined}}
-				Joined!
+		</h3>
+		<div class="join-buttons-section">
+			<button class="join-game-button primary-button"
+				disabled="{{#unless canJoinGame}}disabled{{/unless}}">
+				{{#if isCurrentUserJoined}}
+					Joined!
+				{{else}}
+					Join
+				{{/if}}
+			</button>
+			{{#if isCurrentUserGameCreator}}
+				<button class="abandon-game-button secondary-button">
+					Abandon game
+				</button>
 			{{else}}
-				Join
+				<button class="leave-game-button secondary-button"
+					disabled="{{#unless canLeaveGame}}disabled{{/unless}}">
+					Leave
+				</button>
 			{{/if}}
-		</button>
-		{{#if isCurrentUserGameCreator}}
-			<button class="abandon-game-button secondary-button">
-				Abandon game
-			</button>
-		{{else}}
-			<button class="leave-game-button secondary-button"
-				disabled="{{#unless canLeaveGame}}disabled{{/unless}}">
-				Leave
-			</button>
-		{{/if}}
-		<div>
+		</div>
+		<div class="players-section">
 			{{#each currentlyJoinedPlayers}}
-			<div>
-				{{username}}
-			</div>
+				{{> joinedPlayer}}
 			{{/each}}
+		</div>
+	</div>
+</template>
+
+<template name="joinedPlayer">
+	<div class="joined-player">
+		<div class="player-name">
+			{{username}}
+		</div>
+		<div class="player-card">
+			&lt;(*_*)&gt;
 		</div>
 	</div>
 </template>
