@@ -1,0 +1,15 @@
+.clickybox {
+	text-align: center;
+	margin: 20px;
+	margin-left: 100px;
+	width: 200px;
+	height: 200px;
+	border: 2px solid rgb(255, 153, 102);
+	-webkit-transition: width 500ms ease-out;
+	transition: width 500ms ease-out;
+	background: rgb(255, 204, 153);
+}
+
+.clickybox.open {
+	width: 400px;
+}

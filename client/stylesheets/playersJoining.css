@@ -17,6 +17,10 @@
 	text-align: center;
 	margin: 5px;
 	background-color: #CC9966;
+	transition: padding-bottom 200ms ease-out;
+}
+.joined-player:hover {
+	padding-bottom: 30px
 }
 .player-card {
 	padding: 5px;
