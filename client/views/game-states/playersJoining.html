@@ -1,11 +1,32 @@
 <template name="playersJoining">
 	<div>
-		waiting for players to join
-		current players: {{players}}
-		player count: {{playerCount}}
-
-		join game:
-		leave game:
-		you are already in this game.
+		<div>
+			Waiting for players to join ({{players.length}} / {{playerCount}})
+		</div>
+		<button class="join-game-button primary-button"
+			disabled="{{#unless canJoinGame}}disabled{{/unless}}">
+			{{#if isCurrentUserJoined}}
+				Joined!
+			{{else}}
+				Join
+			{{/if}}
+		</button>
+		{{#if isCurrentUserGameCreator}}
+			<button class="abandon-game-button secondary-button">
+				Abandon game
+			</button>
+		{{else}}
+			<button class="leave-game-button secondary-button"
+				disabled="{{#unless canLeaveGame}}disabled{{/unless}}">
+				Leave
+			</button>
+		{{/if}}
+		<div>
+			{{#each currentlyJoinedPlayers}}
+			<div>
+				{{username}}
+			</div>
+			{{/each}}
+		</div>
 	</div>
 </template>

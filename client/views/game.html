@@ -1,12 +1,17 @@
 <template name="game">
-	this is the game page for {{name}} started by {{creator}}
-	{{#if waitingForPlayers }} 
-		{{> playersJoining}}
-	{{else}}
-		{{#if isOver}}
-			{{> gameOver}}
+	<div class="back-link">
+		<a href="{{pathFor 'home'}}" class="secondary-link">&lt; Back to dashboard</a>
+	</div>
+	<div class="game-info">
+		this is the game page for {{name}} started by {{creator}}
+		{{#if waitingForPlayers }} 
+			{{> playersJoining}}
 		{{else}}
-			{{> round}}
+			{{#if isOver}}
+				{{> gameOver}}
+			{{else}}
+				{{> round}}
+			{{/if}}
 		{{/if}}
-	{{/if}}
+	</div>
 </template>

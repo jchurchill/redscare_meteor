@@ -2,6 +2,69 @@ Games = new Mongo.Collection("games", {
 	transform: function(doc) { return new Game(doc); }
 });
 
+Games.allow({
+	insert: function() { return false; }, // Meteor.methods - createGame
+	update: function() { return true; }, // validated by deny rules
+	remove: function() { return false; } // Only soft deletes
+})
+
+// TODO: We're going to have to find some way to organize the allow / deny logic,
+// TODO: along with the (related) Meteor.methods that affect games.
+// TODO: I don't like how hard it is to use allow/deny on updates - it will
+// TODO: probably be a nightmare to validate every type of state transition
+// TODO: for a game. I feel like Meteor.methods is the way to go in general.
+// TODO: Of course, a mix is a fine option too, and perhaps we should find a
+// TODO: way to organize a mix of Meteor.methods / allow/deny as well.
+// TODO: My thinking is that in general, allow/deny is great for simple documents
+// TODO: that are owned by a particular user, but beyond that too much validation
+// TODO: is needed, leading you to Meteor.methods. Meteor.methods are like good
+// TODO: old MVC controller functions!
+// TODO: One roadblock here is the lack of namespacing. I'd love to call "createGame"
+// TODO: and "abandonGame" as "create" and "abandon", respectively, and have like
+// TODO: a games controller file with all the game-related Meteor.methods on it, but
+// TODO: without namespacing those names are just asking for conflicts. This shouldn't
+// TODO: be too hard to implement.
+// TODO: One thing to consider - what if validation reads stale state? Here's an example:
+// TODO: two players want to join a game when there is one spot left. There is a call to
+// TODO: a Meteor.methods endpoint (or maybe a direct update - would they act differently?),
+// TODO: and because the methods run in parallel (I think?), they both see that they got
+// TODO: the spot, and both get to join, leading to an invalid state. This begs a more
+// TODO: general question - how do you do atomic database updates with meteor+mongo?
+// TODO: Probably something I could look up on stack overflow once I'm not on a bus to NYC
+
+// Don't allow players to join if they've already joined
+// Don't allow players to join if the game is at max capacity
+// Only allow players to join or leave a game themselves, not others
+// Don't allow the game creator to leave his own game
+Games.deny({
+	update: function(userId, doc, fields, modifier) {
+		if (!_.contains(fields, "players")) {
+			return false;
+		}
+		// Only push / pull are allowed on this
+		try {
+			check(modifier, {
+				$push: Match.Optional({
+					players: Match.Where(function(p) {
+						return p === userId
+							&& doc.players.length < doc.playerCount
+							&& !_.contains(doc.players, p);
+					})
+				}),
+				$pull: Match.Optional({
+					players: Match.Where(function(p) {
+						return p === userId && p !== doc.creator;
+					})
+				})
+			});
+		} catch (e) {
+			return true; // deny if match error was hit
+		}
+		return false;
+	},
+	fetch: ['players', 'creator', 'playerCount']
+});
+
 Meteor.methods({
 	createGame: function(doc) {
 		if (!this.userId) {
@@ -33,6 +96,18 @@ Meteor.methods({
 
 		// Insert, return new _id
 		return Games.insert(doc);
+	},
+	abandonGame: function(gameId) {
+		var game = Games.findOne(gameId, {
+			fields: { creator: 1 }
+		})
+		// Check that the current user is the creator of the game
+		if (Meteor.userId() !== game.creator) {
+			throw new Meteor.Error(403, "User who is not game creator cannot abandon it.");
+		}
+		Games.update(gameId, {
+			$set: { dateAbandoned: new Date() }
+		});
 	}
 });
 
@@ -40,6 +115,9 @@ var Game = function(doc) {
 	_.extend(this, doc);
 };
 _.extend(Game.prototype, {
+	isAbandoned: function() {
+		return !!this.dateAbandoned;
+	},
 	containsRole: function(role) {
 		return _.some(this.roles, function(r) { return r === role; });
 	},
@@ -166,6 +244,7 @@ var game = {
 	// Setup information
 	name: "Randolph Towers Game Night",
 	dateCreated: '2014-11-11 00:00:00',
+	dateAbandoned: null,
 	creator: 348579892,
 	playerCount: 6,
 	roles: [1,1,2,2,2,3], // see ROLES enum in game_presets
