@@ -8,14 +8,23 @@ Template.game.helpers({
 		// then the page is reloaded and THIS becomes the Game object.
 		// So initially, none of the Game methods exist
 		// Thus, the reason for this.method && this.method(), so we wont keep getting "undefined is not a function"
-		if (this.waitingForPlayers && this.waitingForPlayers()) {
-			return "playersJoining";
-		}
-		if (this.isOver && this.isOver()) {
-			return "gameOver";
-		} 
-		else {
-			return "round";
+		switch (this.status) {
+			case CONSTANTS.gameStatus.abandoned:
+				return "abandoned";
+			case CONSTANTS.gameStatus.waitingForPlayers:
+				return "playersJoining";
+			case CONSTANTS.gameStatus.nominating:
+				return "nomination";
+			case CONSTANTS.gameStatus.nominationVoting:
+				return "voting";
+			case CONSTANTS.gameStatus.missionVoting:
+				return "mission";
+			case CONSTANTS.gameStatus.assassination:
+				return "assassination";
+			case CONSTANTS.gameStatus.gameOver:
+				return "gameOver";
+			default:
+				throw "Game status unrecognized: " + this.status;
 		}
 	}
 });

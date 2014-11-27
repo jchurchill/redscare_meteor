@@ -28,7 +28,7 @@ Controller.methods({
 		doc.dateCreated = new Date();
 		doc.creator = this.userId;
 		doc.players = [this.userId];
-		// Games are always created with status waiting for players
+		// Games are always created with status waiting-for-players
 		doc.status = CONSTANTS.gameStatus.waitingForPlayers;
 
 		// Insert, return new _id
