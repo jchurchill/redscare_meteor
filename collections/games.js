@@ -12,6 +12,9 @@ _.extend(Game.prototype, {
 	containsRole: function(role) {
 		return _.some(this.roles, function(r) { return r === role.id; });
 	},
+	getSetupConstants: function() {
+		return CONSTANTS.gamePresets[this.playerCount];
+	},
 	getRound: function(roundNum) {
 		return this.rounds && this.rounds[roundNum];
 	},
@@ -98,6 +101,7 @@ var game = {
 	creator: 348579892,
 	playerCount: 6,
 	roles: [1,1,2,2,2,3], // see CONSTANTS.roles enum in constants.js
+	status: CONSTANTS.gameStatus.waitingForPlayers,
 	// Filled in after game begins
 	players: [238472394, 234985728, 2093842980 /* and 3 more*/],
 	playerRoles: { 
@@ -227,6 +231,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,4,4],
 				players: [1,2,3,4,5,6],
+				status: CONSTANTS.gameStatus.nominating,
 				currentRound: 1,
 				rounds: {
 					1: {
@@ -248,6 +253,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,4,4],
 				players: [1,2,3,4,5,6],
+				status: CONSTANTS.gameStatus.nominationVoting,
 				currentRound: 1,
 				rounds: {
 					1: {
@@ -275,6 +281,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,4,4],
 				players: [1,2,3,4,5,6],
+				status: CONSTANTS.gameStatus.missionVoting,
 				currentRound: 1,
 				rounds: {
 					1: {
@@ -310,6 +317,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,2,4],
 				players: [1,2,3,4,5,6],
+				status: CONSTANTS.gameStatus.assassination,
 				playerRoles: {1: 1, 2: 1, 3: 1, 4: 1, 5:2, 6:4},
 				currentRound: 1,
 				passedRoundsCount: 3,

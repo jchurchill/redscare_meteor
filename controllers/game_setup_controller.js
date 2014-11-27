@@ -27,7 +27,9 @@ Controller.methods({
 			// Do not add a player to a game they're already in
 			players: { $not: { $in: [userId] } },
 			// Do not add a player to a game that is at full capacity
-			$where: "this.players.length < this.playerCount"
+			$where: "this.players.length < this.playerCount",
+			// Players cannot be added to an in-progress game
+			status: CONSTANTS.gameStatus.waitingForPlayers
 		},
 		{
 			$push: { players: userId }
@@ -38,15 +40,16 @@ Controller.methods({
 		if (userId !== Meteor.userId()) {
 			throw new Meteor.Error(403, "Cannot remove a player other than yourself from a game.");
 		}
-		// TODO validation: don't allow removal of player from in-progress game
 		Games.update({
 			_id: gameId,
 			// The creator of a game cannot leave it
-			creator: { $ne: userId }
+			creator: { $ne: userId },
+			// Players cannot leave an in-progress game
+			status: CONSTANTS.gameStatus.waitingForPlayers
 		},
 		{
 			$pull: { players: userId }
-		})
+		});
 	}
 });
 
