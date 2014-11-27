@@ -42,12 +42,9 @@ Template.playersJoining.events({
 	// TODO: move this button to the game template - it's relevant at ALL times,
 	// TODO: not just when players are joining
 	"click .abandon-game-button": function() {
-		var afterAbandon = function() {
-			Router.go("home");
-		};
 		// TODO: use jquery dialog or something
 		if(confirm("Are you sure?")) {
-			GameSetupController.call("abandon", this._id, afterAbandon);
+			GameSetupController.call("abandon", this._id);
 		}
 	}
 });
