@@ -14,7 +14,7 @@ Controller.methods({
 			playerCount: Match.Where(function(c) {
 				// playerCount must be part of a valid setup
 				check(c,Match.Integer);
-				return CONSTANTS.gamePresets.hasOwnProperty(c);
+				return Game.constants.presets.hasOwnProperty(c);
 			}),
 			roles: Match.Where(function(rs) {
 				// roles must be array of ints, with length equal to playerCount,
@@ -29,7 +29,7 @@ Controller.methods({
 		doc.creator = this.userId;
 		doc.players = [this.userId];
 		// Games are always created with status waiting-for-players
-		doc.status = CONSTANTS.gameStatus.waitingForPlayers;
+		doc.status = Game.constants.gameStatus.waitingForPlayers;
 
 		// Insert, return new _id
 		return Games.insert(doc);
@@ -46,7 +46,7 @@ _private.roleSetValid = function(roleIds, playerCount) {
 		return false;
 	}
 	// The number of roles must correspond to a valid number of players
-	var setup = CONSTANTS.gamePresets[roleIds.length];
+	var setup = Game.constants.presets[roleIds.length];
 	if (!setup) {
 		return false;
 	}
@@ -55,14 +55,14 @@ _private.roleSetValid = function(roleIds, playerCount) {
 		return false;
 	}
 	// The number of good and evil roles must match with the game setup requirements
-	var roleIdMap = CONSTANTS.roles.getRoleIdMap(),
+	var roleIdMap = Game.constants.roles.getRoleIdMap(),
 		roles = _.map(roleIds, function(r) { return roleIdMap[r]; }),
 		allegianceCounts = _.chain(roles)
 			.groupBy("allegiance")
 			.mapProperties("length")
 			.value(),
-		numGoods = allegianceCounts[CONSTANTS.allegiance.good] || 0,
-		numEvils = allegianceCounts[CONSTANTS.allegiance.evil] || 0;
+		numGoods = allegianceCounts[Game.constants.allegiance.good] || 0,
+		numEvils = allegianceCounts[Game.constants.allegiance.evil] || 0;
 	// All roles must be recognized - this is true if #evils + #goods = all roles
 	if (!((numGoods + numEvils) === roleIds.length)) {
 		return false;

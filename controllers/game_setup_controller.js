@@ -16,7 +16,7 @@ Controller.methods({
 		}, {
 			$set: {
 				dateAbandoned: new Date(),
-				status: CONSTANTS.gameStatus.abandoned
+				status: Game.constants.gameStatus.abandoned
 			}
 		});
 	},
@@ -32,7 +32,7 @@ Controller.methods({
 			// Do not add a player to a game that is at full capacity
 			$where: "this.players.length < this.playerCount",
 			// Players cannot be added to an in-progress game
-			status: CONSTANTS.gameStatus.waitingForPlayers
+			status: Game.constants.gameStatus.waitingForPlayers
 		}, {
 			$push: { players: userId }
 		},
@@ -58,7 +58,7 @@ Controller.methods({
 			// The creator of a game cannot leave it
 			creator: { $ne: userId },
 			// Players cannot leave an in-progress game
-			status: CONSTANTS.gameStatus.waitingForPlayers
+			status: Game.constants.gameStatus.waitingForPlayers
 		}, {
 			$pull: { players: userId },
 			$unset: { dateReadyToBegin: '' }
@@ -78,7 +78,7 @@ _private.tryMarkGameAsReady = function(gameId, successCallback) {
 		_id: gameId,
 		// Mark as ready only if status is still waitingForPlayers
 		// and the game is at full capacity
-		status: CONSTANTS.gameStatus.waitingForPlayers,
+		status: Game.constants.gameStatus.waitingForPlayers,
 		$where: "this.players.length === this.playerCount"
 	}, {
 		$set: { dateReadyToBegin: new Date() }
@@ -93,12 +93,12 @@ _private.beginGame = function(gameId) {
 		// Begin only if status is still waitingForPlayers
 		// and the game is at full capacity,
 		// and the dateReadyToBegin is set
-		status: CONSTANTS.gameStatus.waitingForPlayers,
+		status: Game.constants.gameStatus.waitingForPlayers,
 		$where: "this.players.length === this.playerCount",
 		dateReadyToBegin: { $exists: true }
 	}, {
 		$set: {
-			status: CONSTANTS.gameStatus.nominating
+			status: Game.constants.gameStatus.nominating
 		}
 	});
 };

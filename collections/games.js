@@ -1,11 +1,11 @@
 Games = new Mongo.Collection("games", { 
-	transform: function(doc) { return new Game(doc); }
+	transform: function(doc) { return new RedScareGame(doc); }
 });
 
-var Game = function(doc) {
+var RedScareGame = function(doc) {
 	_.extend(this, doc);
 };
-_.extend(Game.prototype, {
+_.extend(RedScareGame.prototype, {
 	isAbandoned: function() {
 		return !!this.dateAbandoned;
 	},
@@ -13,7 +13,7 @@ _.extend(Game.prototype, {
 		return _.some(this.roles, function(r) { return r === role.id; });
 	},
 	getSetupConstants: function() {
-		return CONSTANTS.gamePresets[this.playerCount];
+		return Game.constants.presets[this.playerCount];
 	},
 	getRound: function(roundNum) {
 		return this.rounds && this.rounds[roundNum];
@@ -74,7 +74,7 @@ _.extend(Game.prototype, {
 		return false;
 	},
 	isAssassinationAttempt: function() {
-		return (this.passedRoundsCount == 3 && this.containsRole(CONSTANTS.roles.merlin))
+		return (this.passedRoundsCount == 3 && this.containsRole(Game.constants.roles.merlin))
 	},
 	isCurrentUserAssassin: function() {
 		// return Meteor.userId() == this.assassination.player;
@@ -100,9 +100,8 @@ var game = {
 	dateAbandoned: null,
 	creator: 348579892,
 	playerCount: 6,
-	roles: [1,1,2,2,2,3], // see CONSTANTS.roles enum in constants.js
-	status: CONSTANTS.gameStatus.waitingForPlayers,
-	// Filled in after game begins
+	roles: [1,1,2,2,2,3],
+	// Filled in as soon as game begins
 	players: [238472394, 234985728, 2093842980 /* and 3 more*/],
 	playerRoles: { 
 		"238472394": 1,
@@ -111,7 +110,7 @@ var game = {
 		/* and 3 more */
 	},
 	// Updated as time progresses
-	isOver: true,
+	status: Game.constants.gameStatus.waitingForPlayers,
 	outcome: 1, // See OUTCOMES enum in game_presets
 	currentLeader: 238472394,
 	currentRound: 2,
@@ -231,7 +230,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,4,4],
 				players: [1,2,3,4,5,6],
-				status: CONSTANTS.gameStatus.nominating,
+				status: Game.constants.gameStatus.nominating,
 				currentRound: 1,
 				rounds: {
 					1: {
@@ -253,7 +252,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,4,4],
 				players: [1,2,3,4,5,6],
-				status: CONSTANTS.gameStatus.nominationVoting,
+				status: Game.constants.gameStatus.nominationVoting,
 				currentRound: 1,
 				rounds: {
 					1: {
@@ -281,7 +280,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,4,4],
 				players: [1,2,3,4,5,6],
-				status: CONSTANTS.gameStatus.missionVoting,
+				status: Game.constants.gameStatus.missionVoting,
 				currentRound: 1,
 				rounds: {
 					1: {
@@ -317,7 +316,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,2,4],
 				players: [1,2,3,4,5,6],
-				status: CONSTANTS.gameStatus.assassination,
+				status: Game.constants.gameStatus.assassination,
 				playerRoles: {1: 1, 2: 1, 3: 1, 4: 1, 5:2, 6:4},
 				currentRound: 1,
 				passedRoundsCount: 3,

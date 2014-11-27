@@ -9,19 +9,19 @@ Template.game.helpers({
 		// So initially, none of the Game methods exist
 		// Thus, the reason for this.method && this.method(), so we wont keep getting "undefined is not a function"
 		switch (this.status) {
-			case CONSTANTS.gameStatus.abandoned:
+			case Game.constants.gameStatus.abandoned:
 				return "abandoned";
-			case CONSTANTS.gameStatus.waitingForPlayers:
+			case Game.constants.gameStatus.waitingForPlayers:
 				return "playersJoining";
-			case CONSTANTS.gameStatus.nominating:
+			case Game.constants.gameStatus.nominating:
 				return "nomination";
-			case CONSTANTS.gameStatus.nominationVoting:
+			case Game.constants.gameStatus.nominationVoting:
 				return "voting";
-			case CONSTANTS.gameStatus.missionVoting:
+			case Game.constants.gameStatus.missionVoting:
 				return "mission";
-			case CONSTANTS.gameStatus.assassination:
+			case Game.constants.gameStatus.assassination:
 				return "assassination";
-			case CONSTANTS.gameStatus.gameOver:
+			case Game.constants.gameStatus.gameOver:
 				return "gameOver";
 			default:
 				throw "Game status unrecognized: " + this.status;
