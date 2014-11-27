@@ -4,7 +4,8 @@
 	</div>
 	
 	<div class="game-info">
-		This is the game page for {{name}} started by {{creator}}
+		<h1 class="game-title">{{name}}</h1>
+		<div class="game-subtitle">Started by {{owningUser.username}}</div>
 	</div>
 	{{> Template.dynamic template=templateToRender }}
 </template>

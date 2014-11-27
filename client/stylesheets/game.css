@@ -4,3 +4,11 @@
 .game-info {
 	margin: 10px;
 }
+.game-title {
+	text-align: center;
+	margin: 5px 0;
+}
+.game-subtitle {
+	text-align: center;
+	font-style: italic;
+}
