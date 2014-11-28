@@ -9,3 +9,6 @@ iron:router
 accounts-ui
 accounts-password
 underscore
+less
+coffeescript
+
