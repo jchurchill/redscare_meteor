@@ -110,7 +110,7 @@ var game = {
 		/* and 3 more */
 	},
 	// Updated as time progresses
-	status: RedScare.Constants.gameStatus.waitingForPlayers,
+	status: 1 /* RedScare.Constants.gameStatus.waitingForPlayers */,
 	outcome: 1, // See OUTCOMES enum in game_presets
 	currentLeader: 238472394,
 	currentRound: 2,
@@ -220,6 +220,7 @@ Game state progression:
 */
 
 // TODO: for testing only. delete this
+Meteor.startup(function() {
 if(Meteor.isServer) {
 	if (Games.find().count() === 0) {
 		Meteor.startup(function() {
@@ -338,3 +339,4 @@ if(Meteor.isServer) {
 		});
 	}
 }
+});

@@ -1,27 +1,31 @@
+Meteor.startup(function() {
+// Usings
+var Constants = RedScare.Constants;
+
 var ROLE_OPTIONS = {
 	MERLIN_ASSASSIN: {
 		name: "merlin-assassin",
 		good: 1,
 		evil: 1,
-		roles: [RedScare.Constants.roles.merlin, RedScare.Constants.roles.assassin]
+		roles: [Constants.roles.merlin, Constants.roles.assassin]
 	},
 	PERCIVAL_MORGANA: {
 		name: "percival-morgana",
 		good: 1,
 		evil: 1,
-		roles: [RedScare.Constants.roles.percival, RedScare.Constants.roles.morgana]
+		roles: [Constants.roles.percival, Constants.roles.morgana]
 	},
 	MORDRED: {
 		name: "mordred",
 		good: 0,
 		evil: 1,
-		roles: [RedScare.Constants.roles.mordred]
+		roles: [Constants.roles.mordred]
 	},
 	OBERON: {
 		name: "oberon",
 		good: 0,
 		evil: 1,
-		roles: [RedScare.Constants.roles.oberon]
+		roles: [Constants.roles.oberon]
 	},
 };
 ROLE_OPTIONS.MERLIN_ASSASSIN.requires = [];
@@ -61,10 +65,11 @@ Template.create_game.events({
 		var selectedRolesToInclude = _.chain(ROLE_OPTIONS)
 			.filter(function(r) { return $(roleInputSelector(r.name)).is(":checked"); })
 			.mapMany(_.property("roles"))
+			.mapInto(Constants.roleDetails)
 			.value();
 		var numSelectedGoodRoles = _.filter(selectedRolesToInclude, _.method("isGood")).length;
 		var numSelectedEvilRoles = _.filter(selectedRolesToInclude, _.method("isEvil")).length;
-		var setup = RedScare.Constants.presets[playerCount];
+		var setup = Constants.presets[playerCount];
 		var roleIds = [];
 		var createdGameId;
 		if (!setup) {
@@ -76,10 +81,10 @@ Template.create_game.events({
 		// based on specified player count
 		roleIds = roleIds.concat(_.pluck(selectedRolesToInclude, "id"));
 		_.times(setup.goods - numSelectedGoodRoles, function() {
-			roleIds.push(RedScare.Constants.roles.normalGood.id);
+			roleIds.push(Constants.roles.normalGood);
 		});
 		_.times(setup.evils - numSelectedEvilRoles, function() {
-			roleIds.push(RedScare.Constants.roles.normalEvil.id);
+			roleIds.push(Constants.roles.normalEvil);
 		});
 
 		CreateGameController.call("create", {
@@ -128,11 +133,11 @@ var resetAllRoles = function() {
 };
 
 var updateAllowedSpecialRoles = function() {
-	// Enable all roles to start out
-	_.chain(ROLE_OPTIONS).values().each(function(role) { setAllowed(role, true); });
-	// Disable any roles that depend on other roles that are not selected
+	// Enable all role options to start out
+	_.chain(ROLE_OPTIONS).values().each(function(roleOption) { setAllowed(roleOption, true); });
+	// Disable any role options that depend on other role options that are not selected
 	disableDependentRoles();
-	// Disable any roles that cannot be enabled because enabling them requires more players 
+	// Disable any role options that cannot be enabled because enabling them requires more players 
 	disableRolesPreventedByPlayerCount();
 };
 
@@ -165,20 +170,20 @@ var disableDependentRoles = function() {
 var disableRolesPreventedByPlayerCount = function() {
 	var playerCount = $("select.player-count-select").val(),
 		currentGoodCount = countSpecialGoodRolesSelected(),
-		goodCountAllowed = RedScare.Constants.presets[playerCount].goods,
+		goodCountAllowed = Constants.presets[playerCount].goods,
 		currentEvilCount = countSpecialEvilRolesSelected(),
-		evilCountAllowed = RedScare.Constants.presets[playerCount].evils,
-		rolesToDisable = rolesWhere(function(r) {
+		evilCountAllowed = Constants.presets[playerCount].evils,
+		rolesToDisable = roleOptionsWhere(function(r) {
 			return (r.good + currentGoodCount > goodCountAllowed) && !isRoleChecked(r);
 		})
-		.concat(rolesWhere(function(r) {
+		.concat(roleOptionsWhere(function(r) {
 			return (r.evil + currentEvilCount > evilCountAllowed) && !isRoleChecked(r);
 		}));
 	_.each(rolesToDisable, function(r) { setAllowed(r, false); });
 };
 
 var countSpecialGoodRolesSelected = function() {
-	return _.chain(rolesWhere(function(r) { return r.good > 0; }))
+	return _.chain(roleOptionsWhere(function(r) { return r.good > 0; }))
 		.reduce(function(s, role) {
 			var checked = isRoleChecked(role);
 			return s + (checked ? role.good : 0);
@@ -186,7 +191,7 @@ var countSpecialGoodRolesSelected = function() {
 };
 
 var countSpecialEvilRolesSelected = function() {
-	return _.chain(rolesWhere(function(r) { return r.evil > 0; }))
+	return _.chain(roleOptionsWhere(function(r) { return r.evil > 0; }))
 		.reduce(function(s, role) {
 			var checked = isRoleChecked(role);
 			return s + (checked ? role.evil : 0);
@@ -197,6 +202,8 @@ var isRoleChecked = function(role) {
 	return $(roleInputSelector(role)).is(":checked");
 };
 
-var rolesWhere = function(predicateFn) {
+var roleOptionsWhere = function(predicateFn) {
 	return _.chain(ROLE_OPTIONS).values().filter(predicateFn).value();
 };
+
+});

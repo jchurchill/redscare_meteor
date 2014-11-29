@@ -55,7 +55,7 @@ _private.roleSetValid = function(roleIds, playerCount) {
 		return false;
 	}
 	// The number of good and evil roles must match with the game setup requirements
-	var roleIdMap = RedScare.Constants.roles.getRoleIdMap(),
+	var roleIdMap = RedScare.Constants.roleDetails,
 		roles = _.map(roleIds, function(r) { return roleIdMap[r]; }),
 		allegianceCounts = _.chain(roles)
 			.groupBy("allegiance")
