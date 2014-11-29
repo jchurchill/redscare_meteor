@@ -1,3 +1,7 @@
+Meteor.startup(function() {
+// Usings
+var Games = RedScare.Collections.Games;
+
 Template.dashboard.helpers({
 	games: function () {
 		return Games.find({
@@ -6,4 +10,6 @@ Template.dashboard.helpers({
 			sort: [["dateCreated", "desc"]]
 		}).fetch();
 	}
+});
+
 });

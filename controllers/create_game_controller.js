@@ -1,3 +1,6 @@
+Meteor.startup(function() {
+// Usings
+var Games = RedScare.Collections.Games;
 var Controller = MeteorController.namespace("create_game");
 
 Controller.methods({
@@ -91,3 +94,5 @@ _private.roleSetValid = function(roleIds, playerCount) {
 	}
 	return true;
 };
+
+});

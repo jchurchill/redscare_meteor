@@ -1,3 +1,6 @@
+Meteor.startup(function() {
+// Usings
+var Games = RedScare.Collections.Games;
 var Controller = MeteorController.namespace("game_round");
 
 Controller.methods({
@@ -22,3 +25,5 @@ _private.throwIfNotCurrentUser = function(userId) {
 		throw new Meteor.Error(403, "The user is not permissioned to do this operation.");
 	}
 };
+
+});

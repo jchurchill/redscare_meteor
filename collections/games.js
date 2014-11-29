@@ -1,5 +1,7 @@
-Games = new Mongo.Collection("games", { 
-	transform: function(doc) { return new RedScareGame(doc); }
+RedScare.NamespaceManager.define("Collections", {
+	Games: new Mongo.Collection("games", { 
+		transform: function(doc) { return new RedScareGame(doc); }
+	})
 });
 
 var RedScareGame = function(doc) {
@@ -14,6 +16,14 @@ _.extend(RedScareGame.prototype, {
 	},
 	getSetupConstants: function() {
 		return RedScare.Constants.presets[this.playerCount];
+	},
+	getNextLeader: function() {
+		var leaderIndex = this.players.indexOf(this.currentLeader);
+		if (leaderIndex < 0 || this.players.length !== this.playerCount) {
+			return;
+		}
+		// Get the next player in the list, wrapping around to the beginning
+		return this.players[(leaderIndex + 1) % this.playerCount];
 	},
 	getRound: function(roundNum) {
 		return this.rounds && this.rounds[roundNum];
@@ -37,15 +47,8 @@ _.extend(RedScareGame.prototype, {
 		return nomination && nomination.nominees
 			&& (round.nomineeCount === nomination.nominees.length);
 	},
-	getCurrentLeader: function() {
-		var nomination = this.getNomination(this.currentRound, this.getCurrentNominationNumber());
-		return nomination && nomination.leader;
-	},
 	waitingForPlayers: function() {
 		return !this.currentRound;
-	},
-	isCurrentUserLeader: function() {
-		return this.getCurrentLeader() == Meteor.userId();
 	},
 	isCurrentNominationVoting: function() {
 		if (this.isCurrentNominationReady()) {
@@ -101,18 +104,18 @@ var game = {
 	creator: 348579892,
 	playerCount: 6,
 	roles: [1,1,2,2,2,3],
-	// Filled in as soon as game begins
+	status: 1 /* RedScare.Constants.gameStatus.waitingForPlayers */,
+	// Filled in while waiting for players
 	players: [238472394, 234985728, 2093842980 /* and 3 more*/],
+	// Filled in as soon as game begins
 	playerRoles: { 
 		"238472394": 1,
 		"234985728": 2,
 		"2093842980": 2
 		/* and 3 more */
 	},
-	// Updated as time progresses
-	status: 1 /* RedScare.Constants.gameStatus.waitingForPlayers */,
-	outcome: 1, // See OUTCOMES enum in game_presets
 	currentLeader: 238472394,
+	// Updated as time progresses
 	currentRound: 2,
 	passedRoundsCount: 1,
 	failedRoundsCount: 1,
@@ -152,7 +155,8 @@ var game = {
 					"234985728": false
 				},
 				passed: false
-			}
+			},
+			complete: true
 		},
 		2: {
 			/* roughly the same as above */
@@ -160,7 +164,8 @@ var game = {
 		/* 3 more populated as game progresses */
 	},
 	/* optional, depending on presence of merlin / assassin in the game */
-	assassination: { player: 234985728, killedMerlin: false }
+	assassination: { player: 234985728, killedMerlin: false },
+	outcome: 1 /* RedScare.Constants.outcomes */
 };
 
 /*
@@ -221,122 +226,123 @@ Game state progression:
 
 // TODO: for testing only. delete this
 Meteor.startup(function() {
+
+var Games = RedScare.Collections.Games;
 if(Meteor.isServer) {
 	if (Games.find().count() === 0) {
-		Meteor.startup(function() {
-			Games.insert({
-				name: "Dustin's Foggy Bottom Game Night - waiting for nominations",
-				dateCreated: '2014-11-20 00:00:00',
-				creator: null,
-				playerCount: 6,
-				roles: [1,1,1,1,4,4],
-				players: [1,2,3,4,5,6],
-				status: RedScare.Constants.gameStatus.nominating,
-				currentRound: 1,
-				rounds: {
-					1: {
-						nomineeCount: 2,
-						currentNominationNumber: 1,
-						nominations: {
-							1: {
-								leader: "AfKNADoWLcNhmdjgv",
-								nominees: [238472394]
-							}
+		Games.insert({
+			name: "Dustin's Foggy Bottom Game Night - waiting for nominations",
+			dateCreated: '2014-11-20 00:00:00',
+			creator: null,
+			playerCount: 6,
+			roles: [1,1,1,1,4,4],
+			players: [1,2,3,4,5,6],
+			status: RedScare.Constants.gameStatus.nominating,
+			currentRound: 1,
+			rounds: {
+				1: {
+					nomineeCount: 2,
+					currentNominationNumber: 1,
+					nominations: {
+						1: {
+							leader: "AfKNADoWLcNhmdjgv",
+							nominees: [238472394]
 						}
 					}
 				}
-			});
-			Games.insert({
-				name: "Dustin's Foggy Bottom Game Night - waiting for votes",
-				dateCreated: '2014-11-20 00:00:00',
-				creator: null,
-				playerCount: 6,
-				roles: [1,1,1,1,4,4],
-				players: [1,2,3,4,5,6],
-				status: RedScare.Constants.gameStatus.nominationVoting,
-				currentRound: 1,
-				rounds: {
-					1: {
-						nomineeCount: 2,
-						currentNominationNumber: 1,
-						nominations: {
-							1: {
-								leader: "AfKNADoWLcNhmdjgv",
-								nominees: [238472394, 3543598],
-								votes: {
-									"238472394": true,
-									"234985728": false,
-									"2093842980": false
-								},
-								approved: false
-							}
+			}
+		});
+		Games.insert({
+			name: "Dustin's Foggy Bottom Game Night - waiting for votes",
+			dateCreated: '2014-11-20 00:00:00',
+			creator: null,
+			playerCount: 6,
+			roles: [1,1,1,1,4,4],
+			players: [1,2,3,4,5,6],
+			status: RedScare.Constants.gameStatus.nominationVoting,
+			currentRound: 1,
+			rounds: {
+				1: {
+					nomineeCount: 2,
+					currentNominationNumber: 1,
+					nominations: {
+						1: {
+							leader: "AfKNADoWLcNhmdjgv",
+							nominees: [238472394, 3543598],
+							votes: {
+								"238472394": true,
+								"234985728": false,
+								"2093842980": false
+							},
+							approved: false
 						}
 					}
 				}
-			});
-			Games.insert({
-				name: "Dustin's Foggy Bottom Game Night - mission happening",
-				dateCreated: '2014-11-20 00:00:00',
-				creator: null,
-				playerCount: 6,
-				roles: [1,1,1,1,4,4],
-				players: [1,2,3,4,5,6],
-				status: RedScare.Constants.gameStatus.missionVoting,
-				currentRound: 1,
-				rounds: {
-					1: {
-						nomineeCount: 2,
-						currentNominationNumber: 1,
-						nominations: {
-							1: {
-								leader: "AfKNADoWLcNhmdjgv",
-								nominees: [238472394, 3543598],
-								votes: {
-									"238472394": true,
-									"234985728": true,
-									"2093842980": true,
-									"209384230": true,
-									"2093842": true,
-									"2093": true
-								},
-								approved: true
-							}
-						},
-						mission: {
-							nominationNumber: 1,
+			}
+		});
+		Games.insert({
+			name: "Dustin's Foggy Bottom Game Night - mission happening",
+			dateCreated: '2014-11-20 00:00:00',
+			creator: null,
+			playerCount: 6,
+			roles: [1,1,1,1,4,4],
+			players: [1,2,3,4,5,6],
+			status: RedScare.Constants.gameStatus.missionVoting,
+			currentRound: 1,
+			rounds: {
+				1: {
+					nomineeCount: 2,
+					currentNominationNumber: 1,
+					nominations: {
+						1: {
+							leader: "AfKNADoWLcNhmdjgv",
+							nominees: [238472394, 3543598],
+							votes: {
+								"238472394": true,
+								"234985728": true,
+								"2093842980": true,
+								"209384230": true,
+								"2093842": true,
+								"2093": true
+							},
+							approved: true
+						}
+					},
+					mission: {
+						nominationNumber: 1,
+						nominees: [238472394, 3543598],
+						votes: {}
+					}
+				}
+			}
+		});	
+		Games.insert({
+			name: "Dustin's Foggy Bottom Game Night - assassination",
+			dateCreated: '2014-11-20 00:00:00',
+			creator: null,
+			playerCount: 6,
+			roles: [1,1,1,1,2,4],
+			players: [1,2,3,4,5,6],
+			status: RedScare.Constants.gameStatus.assassination,
+			playerRoles: {1: 1, 2: 1, 3: 1, 4: 1, 5:2, 6:4},
+			currentRound: 1,
+			passedRoundsCount: 3,
+			rounds: {
+				1: {
+					nomineeCount: 2,
+					currentNominationNumber: 1,
+					nominations: {
+						1: {
+							leader: "AfKNADoWLcNhmdjgv",
 							nominees: [238472394, 3543598],
 							votes: {}
 						}
 					}
-				}
-			});	
-			Games.insert({
-				name: "Dustin's Foggy Bottom Game Night - assassination",
-				dateCreated: '2014-11-20 00:00:00',
-				creator: null,
-				playerCount: 6,
-				roles: [1,1,1,1,2,4],
-				players: [1,2,3,4,5,6],
-				status: RedScare.Constants.gameStatus.assassination,
-				playerRoles: {1: 1, 2: 1, 3: 1, 4: 1, 5:2, 6:4},
-				currentRound: 1,
-				passedRoundsCount: 3,
-				rounds: {
-					1: {
-						nomineeCount: 2,
-						currentNominationNumber: 1,
-						nominations: {
-							1: {
-								leader: "AfKNADoWLcNhmdjgv",
-								nominees: [238472394, 3543598],
-								votes: {}
-							}
-						}
-					},
-					assassination: {player: "AfKNADoWLcNhmdjgv"}
-				}
-			});
+				},
+				assassination: {player: "AfKNADoWLcNhmdjgv"}
+			}
 		});
 	}
 }
+
 });
