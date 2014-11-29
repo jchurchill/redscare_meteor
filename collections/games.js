@@ -13,7 +13,7 @@ _.extend(RedScareGame.prototype, {
 		return _.some(this.roles, function(r) { return r === role.id; });
 	},
 	getSetupConstants: function() {
-		return Game.constants.presets[this.playerCount];
+		return RedScare.Constants.presets[this.playerCount];
 	},
 	getRound: function(roundNum) {
 		return this.rounds && this.rounds[roundNum];
@@ -74,7 +74,7 @@ _.extend(RedScareGame.prototype, {
 		return false;
 	},
 	isAssassinationAttempt: function() {
-		return (this.passedRoundsCount == 3 && this.containsRole(Game.constants.roles.merlin))
+		return (this.passedRoundsCount == 3 && this.containsRole(RedScare.Constants.roles.merlin))
 	},
 	isCurrentUserAssassin: function() {
 		// return Meteor.userId() == this.assassination.player;
@@ -110,7 +110,7 @@ var game = {
 		/* and 3 more */
 	},
 	// Updated as time progresses
-	status: Game.constants.gameStatus.waitingForPlayers,
+	status: RedScare.Constants.gameStatus.waitingForPlayers,
 	outcome: 1, // See OUTCOMES enum in game_presets
 	currentLeader: 238472394,
 	currentRound: 2,
@@ -230,7 +230,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,4,4],
 				players: [1,2,3,4,5,6],
-				status: Game.constants.gameStatus.nominating,
+				status: RedScare.Constants.gameStatus.nominating,
 				currentRound: 1,
 				rounds: {
 					1: {
@@ -252,7 +252,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,4,4],
 				players: [1,2,3,4,5,6],
-				status: Game.constants.gameStatus.nominationVoting,
+				status: RedScare.Constants.gameStatus.nominationVoting,
 				currentRound: 1,
 				rounds: {
 					1: {
@@ -280,7 +280,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,4,4],
 				players: [1,2,3,4,5,6],
-				status: Game.constants.gameStatus.missionVoting,
+				status: RedScare.Constants.gameStatus.missionVoting,
 				currentRound: 1,
 				rounds: {
 					1: {
@@ -316,7 +316,7 @@ if(Meteor.isServer) {
 				playerCount: 6,
 				roles: [1,1,1,1,2,4],
 				players: [1,2,3,4,5,6],
-				status: Game.constants.gameStatus.assassination,
+				status: RedScare.Constants.gameStatus.assassination,
 				playerRoles: {1: 1, 2: 1, 3: 1, 4: 1, 5:2, 6:4},
 				currentRound: 1,
 				passedRoundsCount: 3,

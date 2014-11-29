@@ -16,7 +16,7 @@ Controller.methods({
 		}, {
 			$set: {
 				dateAbandoned: new Date(),
-				status: Game.constants.gameStatus.abandoned
+				status: RedScare.Constants.gameStatus.abandoned
 			}
 		});
 	},
@@ -32,7 +32,7 @@ Controller.methods({
 			// Do not add a player to a game that is at full capacity
 			$where: "this.players.length < this.playerCount",
 			// Players cannot be added to an in-progress game
-			status: Game.constants.gameStatus.waitingForPlayers
+			status: RedScare.Constants.gameStatus.waitingForPlayers
 		}, {
 			$push: { players: userId }
 		},
@@ -58,7 +58,7 @@ Controller.methods({
 			// The creator of a game cannot leave it
 			creator: { $ne: userId },
 			// Players cannot leave an in-progress game
-			status: Game.constants.gameStatus.waitingForPlayers
+			status: RedScare.Constants.gameStatus.waitingForPlayers
 		}, {
 			$pull: { players: userId },
 			$unset: { dateReadyToBegin: '' }
@@ -78,7 +78,7 @@ _private.tryMarkGameAsReady = function(gameId, successCallback) {
 		_id: gameId,
 		// Mark as ready only if status is still waitingForPlayers
 		// and the game is at full capacity
-		status: Game.constants.gameStatus.waitingForPlayers,
+		status: RedScare.Constants.gameStatus.waitingForPlayers,
 		$where: "this.players.length === this.playerCount"
 	}, {
 		$set: { dateReadyToBegin: new Date() }
@@ -93,12 +93,12 @@ _private.beginGame = function(gameId) {
 		// Begin only if status is still waitingForPlayers
 		// and the game is at full capacity,
 		// and the dateReadyToBegin is set
-		status: Game.constants.gameStatus.waitingForPlayers,
+		status: RedScare.Constants.gameStatus.waitingForPlayers,
 		$where: "this.players.length === this.playerCount",
 		dateReadyToBegin: { $exists: true }
 	}, {
 		$set: {
-			status: Game.constants.gameStatus.nominating
+			status: RedScare.Constants.gameStatus.nominating
 		}
 	});
 };

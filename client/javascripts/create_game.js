@@ -3,25 +3,25 @@ var ROLE_OPTIONS = {
 		name: "merlin-assassin",
 		good: 1,
 		evil: 1,
-		roles: [Game.constants.roles.merlin, Game.constants.roles.assassin]
+		roles: [RedScare.Constants.roles.merlin, RedScare.Constants.roles.assassin]
 	},
 	PERCIVAL_MORGANA: {
 		name: "percival-morgana",
 		good: 1,
 		evil: 1,
-		roles: [Game.constants.roles.percival, Game.constants.roles.morgana]
+		roles: [RedScare.Constants.roles.percival, RedScare.Constants.roles.morgana]
 	},
 	MORDRED: {
 		name: "mordred",
 		good: 0,
 		evil: 1,
-		roles: [Game.constants.roles.mordred]
+		roles: [RedScare.Constants.roles.mordred]
 	},
 	OBERON: {
 		name: "oberon",
 		good: 0,
 		evil: 1,
-		roles: [Game.constants.roles.oberon]
+		roles: [RedScare.Constants.roles.oberon]
 	},
 };
 ROLE_OPTIONS.MERLIN_ASSASSIN.requires = [];
@@ -64,7 +64,7 @@ Template.create_game.events({
 			.value();
 		var numSelectedGoodRoles = _.filter(selectedRolesToInclude, _.method("isGood")).length;
 		var numSelectedEvilRoles = _.filter(selectedRolesToInclude, _.method("isEvil")).length;
-		var setup = Game.constants.presets[playerCount];
+		var setup = RedScare.Constants.presets[playerCount];
 		var roleIds = [];
 		var createdGameId;
 		if (!setup) {
@@ -76,10 +76,10 @@ Template.create_game.events({
 		// based on specified player count
 		roleIds = roleIds.concat(_.pluck(selectedRolesToInclude, "id"));
 		_.times(setup.goods - numSelectedGoodRoles, function() {
-			roleIds.push(Game.constants.roles.normalGood.id);
+			roleIds.push(RedScare.Constants.roles.normalGood.id);
 		});
 		_.times(setup.evils - numSelectedEvilRoles, function() {
-			roleIds.push(Game.constants.roles.normalEvil.id);
+			roleIds.push(RedScare.Constants.roles.normalEvil.id);
 		});
 
 		CreateGameController.call("create", {
@@ -165,9 +165,9 @@ var disableDependentRoles = function() {
 var disableRolesPreventedByPlayerCount = function() {
 	var playerCount = $("select.player-count-select").val(),
 		currentGoodCount = countSpecialGoodRolesSelected(),
-		goodCountAllowed = Game.constants.presets[playerCount].goods,
+		goodCountAllowed = RedScare.Constants.presets[playerCount].goods,
 		currentEvilCount = countSpecialEvilRolesSelected(),
-		evilCountAllowed = Game.constants.presets[playerCount].evils,
+		evilCountAllowed = RedScare.Constants.presets[playerCount].evils,
 		rolesToDisable = rolesWhere(function(r) {
 			return (r.good + currentGoodCount > goodCountAllowed) && !isRoleChecked(r);
 		})

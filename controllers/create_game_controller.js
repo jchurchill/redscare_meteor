@@ -14,7 +14,7 @@ Controller.methods({
 			playerCount: Match.Where(function(c) {
 				// playerCount must be part of a valid setup
 				check(c,Match.Integer);
-				return Game.constants.presets.hasOwnProperty(c);
+				return RedScare.Constants.presets.hasOwnProperty(c);
 			}),
 			roles: Match.Where(function(rs) {
 				// roles must be array of ints, with length equal to playerCount,
@@ -29,7 +29,7 @@ Controller.methods({
 		doc.creator = this.userId;
 		doc.players = [this.userId];
 		// Games are always created with status waiting-for-players
-		doc.status = Game.constants.gameStatus.waitingForPlayers;
+		doc.status = RedScare.Constants.gameStatus.waitingForPlayers;
 
 		// Insert, return new _id
 		return Games.insert(doc);
@@ -46,7 +46,7 @@ _private.roleSetValid = function(roleIds, playerCount) {
 		return false;
 	}
 	// The number of roles must correspond to a valid number of players
-	var setup = Game.constants.presets[roleIds.length];
+	var setup = RedScare.Constants.presets[roleIds.length];
 	if (!setup) {
 		return false;
 	}
@@ -55,14 +55,14 @@ _private.roleSetValid = function(roleIds, playerCount) {
 		return false;
 	}
 	// The number of good and evil roles must match with the game setup requirements
-	var roleIdMap = Game.constants.roles.getRoleIdMap(),
+	var roleIdMap = RedScare.Constants.roles.getRoleIdMap(),
 		roles = _.map(roleIds, function(r) { return roleIdMap[r]; }),
 		allegianceCounts = _.chain(roles)
 			.groupBy("allegiance")
 			.mapProperties("length")
 			.value(),
-		numGoods = allegianceCounts[Game.constants.allegiance.good] || 0,
-		numEvils = allegianceCounts[Game.constants.allegiance.evil] || 0;
+		numGoods = allegianceCounts[RedScare.Constants.allegiance.good] || 0,
+		numEvils = allegianceCounts[RedScare.Constants.allegiance.evil] || 0;
 	// All roles must be recognized - this is true if #evils + #goods = all roles
 	if (!((numGoods + numEvils) === roleIds.length)) {
 		return false;

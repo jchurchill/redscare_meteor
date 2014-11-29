@@ -1,1 +1,0 @@
-Game.addNamespace("Controllers");
