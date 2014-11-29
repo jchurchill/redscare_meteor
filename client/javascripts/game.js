@@ -13,6 +13,8 @@ Template.game.helpers({
 				return "abandoned";
 			case RedScare.Constants.gameStatus.waitingForPlayers:
 				return "playersJoining";
+			case RedScare.Constants.gameStatus.starting:
+				return "starting";
 			case RedScare.Constants.gameStatus.nominating:
 				return "nomination";
 			case RedScare.Constants.gameStatus.nominationVoting:

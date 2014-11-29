@@ -81,12 +81,11 @@ GameStateManager.beginGame = function(gameId, successCallback) {
 			status: Status.starting
 		}
 	},
-	function (err, updated) {
-		if (err || updated === 0) { return; }
+	callbackIfSuccessful(function() {
 		// Now that we're safely in a state where players cannot be added or removed,
 		// randomly set up the role assignments, and randomly assign the current leader
 		prepareGame(gameId, successCallback);
-	});
+	}));
 };
 
 GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {

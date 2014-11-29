@@ -1,0 +1,13 @@
+<template name="starting">
+	{{#if settingUpGame}}
+		<h1 style="text-align:center;">
+			Setting up game...
+		</h1>
+	{{else}}
+		<div style="text-align:center;">
+		Some secrets!
+		<br/>
+		{{to_json this.playerRoles}}
+		</div>
+	{{/if}}
+</template>
