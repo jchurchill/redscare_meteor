@@ -134,7 +134,9 @@ function prepareGame(gameId, successCallback) {
 		$set: {
 			playerRoles: roleAssignments,
 			currentLeader: currentLeader,
-			currentRound: 0
+			currentRound: 0,
+			passedRoundsCount: 0,
+			failedRoundsCount: 0
 		}
 	},
 	callbackIfSuccessful(successCallback));
