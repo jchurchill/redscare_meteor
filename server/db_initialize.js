@@ -74,6 +74,7 @@ if (Games.find().count() === 0) {
 		rounds: {
 			1: {
 				nomineeCount: 2,
+				failsRequired: 1,
 				currentNominationNumber: 1
 			}
 		}
@@ -97,6 +98,7 @@ if (Games.find().count() === 0) {
 		rounds: {
 			1: {
 				nomineeCount: 2,
+				failsRequired: 1,
 				currentNominationNumber: 1,
 				nominations: {
 					1: {
@@ -134,6 +136,7 @@ if (Games.find().count() === 0) {
 		rounds: {
 			1: {
 				nomineeCount: 2,
+				failsRequired: 1,
 				currentNominationNumber: 1,
 				nominations: {
 					1: {
@@ -164,7 +167,7 @@ if (Games.find().count() === 0) {
 					},
 				},
 				mission: {
-					nominationNumber: 1,
+					nominationNum: 1,
 					nominees: [sixUsers[1], sixUsers[2]],
 					votes: makeUserMapping([
 						[sixUsers[1], true]
@@ -194,6 +197,7 @@ if (Games.find().count() === 0) {
 		rounds: {
 			1: {
 				nomineeCount: 2,
+				failsRequired: 1,
 				currentNominationNumber: 1,
 				nominations: {
 					1: {
@@ -284,6 +288,7 @@ if (Games.find().count() === 0) {
 		rounds: {
 			1: {
 				nomineeCount: 2,
+				failsRequired: 1,
 				currentNominationNumber: 1,
 				nominations: {
 					1: {
@@ -301,17 +306,22 @@ if (Games.find().count() === 0) {
 					}
 				},
 				mission: {
-					nominationNumber: 1,
+					nominationNum: 1,
 					nominees: [sixUsers[0], sixUsers[1]],
 					votes: makeUserMapping([
 						[sixUsers[0], true],
 						[sixUsers[1], true]
 					]),
-					passed: true
+					outcome: {
+						passCount: 2,
+						failCount: 0,
+						passed: true
+					}
 				}
 			},
 			2: {
 				nomineeCount: 3,
+				failsRequired: 1,
 				currentNominationNumber: 1,
 				nominations: {
 					1: {
@@ -329,18 +339,23 @@ if (Games.find().count() === 0) {
 					}
 				},
 				mission: {
-					nominationNumber: 1,
+					nominationNum: 1,
 					nominees: [sixUsers[1], sixUsers[0], sixUsers[2]],
 					votes: makeUserMapping([
 						[sixUsers[0], true],
 						[sixUsers[1], true],
 						[sixUsers[2], true]
 					]),
-					passed: true
+					outcome: {
+						passCount: 3,
+						failCount: 0,
+						passed: true
+					}
 				}
 			},
 			3: {
 				nomineeCount: 4,
+				failsRequired: 1,
 				currentNominationNumber: 1,
 				nominations: {
 					1: {
@@ -358,7 +373,7 @@ if (Games.find().count() === 0) {
 					}
 				},
 				mission: {
-					nominationNumber: 1,
+					nominationNum: 1,
 					nominees: [sixUsers[2], sixUsers[1], sixUsers[0], sixUsers[3]],
 					votes: makeUserMapping([
 						[sixUsers[0], true],
@@ -366,7 +381,11 @@ if (Games.find().count() === 0) {
 						[sixUsers[2], true],
 						[sixUsers[3], true]
 					]),
-					passed: true
+					outcome: {
+						passCount: 4,
+						failCount: 0,
+						passed: true
+					}
 				}
 			}
 		},

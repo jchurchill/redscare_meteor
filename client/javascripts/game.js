@@ -1,6 +1,23 @@
+Meteor.startup(function() {
+// Usings
+var Users = Meteor.users;
+var Status = RedScare.Constants.gameStatus;
+
+// Constants
+var STARTED_STATES = [
+	Status.nominating,
+	Status.nominationVoting,
+	Status.missionVoting,
+	Status.assassination,
+	Status.gameOver
+];
+
 Template.game.helpers({
 	owningUser: function() {
-		return Meteor.users.findOne(this.creator);
+		return Users.findOne(this.creator);
+	},
+	gameStarted: function() {
+		return _.contains(STARTED_STATES, this.status);
 	},
 	templateToRender: function() {
 		// TODO: fix this by using iron-router's waitFor property in defining the route
@@ -9,24 +26,26 @@ Template.game.helpers({
 		// So initially, none of the Game methods exist
 		// Thus, the reason for this.method && this.method(), so we wont keep getting "undefined is not a function"
 		switch (this.status) {
-			case RedScare.Constants.gameStatus.abandoned:
+			case Status.abandoned:
 				return "abandoned";
-			case RedScare.Constants.gameStatus.waitingForPlayers:
+			case Status.waitingForPlayers:
 				return "playersJoining";
-			case RedScare.Constants.gameStatus.starting:
+			case Status.starting:
 				return "starting";
-			case RedScare.Constants.gameStatus.nominating:
+			case Status.nominating:
 				return "nomination";
-			case RedScare.Constants.gameStatus.nominationVoting:
+			case Status.nominationVoting:
 				return "voting";
-			case RedScare.Constants.gameStatus.missionVoting:
+			case Status.missionVoting:
 				return "mission";
-			case RedScare.Constants.gameStatus.assassination:
+			case Status.assassination:
 				return "assassination";
-			case RedScare.Constants.gameStatus.gameOver:
+			case Status.gameOver:
 				return "gameOver";
 			default:
 				throw "Game status unrecognized: " + this.status;
 		}
 	}
+});
+
 });

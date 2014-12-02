@@ -1,0 +1,98 @@
+<template name="gameStateSummary">
+	{{!--
+		Data context for this template should be a game object.
+		It doesn't need to contain player secrets.
+		It should be at least past the "starting" phase.
+	--}}
+	<div class="game-state-summary">
+		<div>Game summary</div>
+		{{#each gameRounds}}
+			{{> gameStateSummary_round }}
+		{{/each}}
+		<div class="round-detail">
+			{{#if selectedRound}}
+				{{> gameStateSummary_roundDetail selectedRound }}
+			{{else}}
+				Select a round to view more information.
+			{{/if}}
+		</div>
+	</div>
+</template>
+
+<template name="gameStateSummary_round">
+	<div class="round-section">
+		<div class="round-token
+			{{#if selected}}
+				selected-round
+			{{/if}}
+			{{#if round}}
+				{{#if round.mission.outcome}}
+					{{#if round.mission.outcome.passed}}
+						passed
+					{{else}}
+						failed
+					{{/if}}
+				{{else}}
+					current
+				{{/if}}
+			{{else}}
+				disabled
+			{{/if}}
+			"
+			data-round-num="{{roundNum}}">
+			<div>Round</div>
+			<div class="round-token-num">{{roundNum}}</div>
+		</div>
+		<div class="round-subtext">
+			<div>{{presets.nominations}} players</div>
+			<div>fails required: {{presets.requiredFails}}</div>
+		</div>
+	</div>
+</template>
+
+<template name="gameStateSummary_roundDetail">
+	<div class="round-detail-general">
+		<div class="round-general-info">
+			<span class="round-general-info-item">
+				{{nomineeCount}} players on the mission
+			</span>
+			<span class="round-general-info-item">
+				{{#if plural failsRequired}}
+					{{failsRequired}} fail votes required to fail
+				{{else}}
+					{{failsRequired}} fail vote required to fail
+				{{/if}}
+			</span>
+		</div>
+		<div class="round-votes">
+			{{#with mission.outcome}}
+				{{#if this}}
+					<span class="round-vote-tally">
+						<span class="vote-count round-pass-count">{{passCount}}</span> passes
+					</span>
+					<span class="round-vote-tally">
+						<span class="vote-count round-fail-count">{{failCount}}</span> fails
+					</span>
+				{{else}}
+					This round is currently in progress.
+				{{/if}}
+			{{/with}}
+		</div>
+	</div>
+	{{#if nominations}}
+		<div class="round-detail-nominations">
+			{{#each roundNominations}}
+				{{!-- TODO --}}
+				<div>{{to_json this}}</div>
+			{{/each}}
+		</div>
+	{{/if}}
+	{{#if mission}}
+		<div class="round-detail-mission">
+			{{#with mission}}
+				{{!-- TODO --}}
+				<div>{{to_json this}}</div>
+			{{/with}}
+		</div>
+	{{/if}}
+</template>

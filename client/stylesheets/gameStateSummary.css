@@ -1,0 +1,112 @@
+/************************************/
+/* For the overall summary template */
+/************************************/
+.game-state-summary {
+	text-align: center;
+	margin: 2px;
+	padding: 10px;
+	width: 50%;
+	height: 400px;
+	border: 2px solid #222222;
+	box-sizing: border-box;
+	float:right;
+}
+.round-detail {
+	margin: 10px;
+}
+
+/**************************/
+/* For the Round template */
+/**************************/
+.round-section {
+	display: inline-block;
+}
+.round-subtext {
+	font-size: xx-small;
+}
+.round-token {
+	border-radius: 50%;
+	border: 1px solid #CC2233;
+	font-size: x-small;
+	padding: 15px 5px 0 5px;
+	height: 60px;
+	width: 60px;
+	margin: 5px;
+	box-sizing: border-box;
+}
+.round-token-num {
+	font-weight: bold;
+	font-size: large;
+}
+.round-token:hover:not(.disabled) {
+	background-color: #FFFFFF;
+	cursor: pointer;
+}
+.round-token.selected-round {
+	box-shadow: 0 0 50px yellow;
+}
+.round-token.disabled {
+	background-color: #CCCCCC;
+	color: #999999;
+	border: 1px solid #555555;
+}
+.round-token.current {
+	background-color: #CCCCFF;
+}
+.round-token.passed {
+	background-color: #33FF33;
+}
+.round-token.failed {
+	background-color: #FF3333;
+}
+
+/*********************************/
+/* For the Round Detail template */
+/*********************************/
+.round-detail-general {
+	font-size: smaller;
+	border-top: 1px solid #AAAAAA;
+	margin: 5px;
+}
+.round-general-info {
+	margin: 5px;
+}
+.round-general-info-item {
+	margin: 0 5px;
+}
+.vote-count {
+	font-size: larger;
+	font-weight: bold;
+	margin-right: 5px;
+}
+.round-vote-tally {
+	margin: 0 20px;
+}
+.round-pass-count {
+	color: #228833;
+}
+.round-fail-count {
+	color: #CC2233;
+}
+.round-detail-nominations {
+	margin: 5px;
+}
+.round-detail-mission {
+	margin: 5px;
+}
+
+/*******************************/
+/* For the Nomination template */
+/*******************************/
+.player-vote {
+	display: inline-block;
+}
+.player-upvoted {
+	background-color: green;
+}
+.player-downvoted {
+	background-color: red;
+}
+/****************************/
+/* For the Mission template */
+/****************************/

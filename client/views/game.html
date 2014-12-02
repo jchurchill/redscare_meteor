@@ -7,5 +7,12 @@
 		<h1 class="game-title">{{name}}</h1>
 		<div class="game-subtitle">Started by {{owningUser.username}}</div>
 	</div>
-	{{> Template.dynamic template=templateToRender }}
+	{{#if gameStarted }}
+		<div>
+			{{> gameStateSummary }}
+		</div>
+	{{/if}}
+	<div>
+		{{> Template.dynamic template=templateToRender }}
+	</div>
 </template>

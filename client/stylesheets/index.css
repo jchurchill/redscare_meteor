@@ -40,6 +40,11 @@ a {
 	font-size: smaller;
 }
 
+.pipe {
+	margin: 0 3px;
+	font-weight: bold;
+}
+
 .hidden {
 	visibility: hidden;
 	display: none;

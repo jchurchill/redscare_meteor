@@ -1,13 +1,17 @@
 RedScare.NamespaceManager.define("Collections", {
 	Games: new Mongo.Collection("games", { 
-		transform: function(doc) { return new RedScareGame(doc); }
+		transform: function(doc) { return new Game(doc); }
 	})
 });
 
-var RedScareGame = function(doc) {
+var Game = function(doc) {
 	_.extend(this, doc);
+	// Map rounds into the Round transform
+	this.rounds = _.mapProperties(this.rounds, function(roundDoc, roundNum) {
+		return new Round(roundNum, roundDoc);
+	});
 };
-_.extend(RedScareGame.prototype, {
+_.extend(Game.prototype, {
 	isAbandoned: function() {
 		return !!this.dateAbandoned;
 	},
@@ -96,6 +100,36 @@ _.extend(RedScareGame.prototype, {
 	}
 });
 
+var Round = function(roundNum, roundDoc) {
+	_.extend(this, roundDoc);
+	this.roundNum = roundNum;
+	// Map nominations into the Nomination transform
+	if (this.nominations) {
+		this.nominations = _.mapProperties(this.nominations, function(nominationDoc, nominationNum) {
+			return new Nomination(nominationNum, nominationDoc);
+		});
+	}
+	// Apply Mission transform to mission
+	if (this.mission) {
+		this.mission = new Mission(this.mission);
+	}
+};
+_.extend(Round.prototype, {
+});
+
+var Nomination = function(nominationNum, nominationDoc) {
+	_.extend(this, nominationDoc);
+	this.nominationNum = nominationNum;
+};
+_.extend(Nomination.prototype, {
+});
+
+var Mission = function(missionDoc) {
+	_.extend(this, missionDoc);
+};
+_.extend(Mission.prototype, {
+});
+
 var game = {
 	// Setup information
 	name: "Randolph Towers Game Night",
@@ -108,6 +142,7 @@ var game = {
 	// Filled in while waiting for players
 	players: [238472394, 234985728, 2093842980 /* and 3 more*/],
 	// Filled in as soon as game begins
+	// #secret
 	playerRoles: { 
 		"238472394": 1,
 		"234985728": 2,
@@ -122,6 +157,7 @@ var game = {
 	rounds: {
 		1: {
 			nomineeCount: 2,
+			failsRequired: 1,
 			currentNominationNumber: 2,
 			nominations: {
 				1: {
@@ -148,15 +184,19 @@ var game = {
 				}
 			},
 			mission: {
-				nominationNumber: 2,
+				nominationNum: 2,
 				nominees: [238472394, 234985728],
+				// #secret
 				votes: {
 					"238472394": true,
 					"234985728": false
 				},
-				passed: false
-			},
-			complete: true
+				outcome: {
+					passCount: 1,
+					failCount: 1,
+					passed: false
+				}
+			}
 		},
 		2: {
 			/* roughly the same as above */
