@@ -40,10 +40,6 @@ a {
 	font-size: smaller;
 }
 
-.pipe {
-	margin: 0 3px;
-	font-weight: bold;
-}
 
 .hidden {
 	visibility: hidden;
@@ -66,4 +62,15 @@ a {
 	margin: 0px;
 	background-color: rgba(0,0,0,0.8);
 	color: white;
+}
+
+.username {
+	border-radius: 3px;
+	text-shadow: 0 0 4px black;
+	padding: 0 3px;
+	border: 1px solid #666666;
+	display: inline-block;
+	color: white;
+	margin: 1px;
+	background-color: #888888;
 }

@@ -6,8 +6,7 @@
 	margin: 2px;
 	padding: 10px;
 	width: 50%;
-	height: 400px;
-	border: 2px solid #222222;
+	border-left: 2px solid #222222;
 	box-sizing: border-box;
 	float:right;
 }
@@ -90,6 +89,8 @@
 }
 .round-detail-nominations {
 	margin: 5px;
+	text-align: initial;
+	display: inline-block;
 }
 .round-detail-mission {
 	margin: 5px;
@@ -98,13 +99,42 @@
 /*******************************/
 /* For the Nomination template */
 /*******************************/
-.player-vote {
-	display: inline-block;
+.nomination {
+	margin: 5px;
+	display: flex;
+	align-items: center;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #CCCCCC;
 }
-.player-upvoted {
+.nomination-number {
+	display: inline-block;
+	border: 1px solid black;
+	border-radius: 100px;
+	padding: 5px;
+	margin-right: 20px;
+	background-color: #dddddd;
+	color: black;
+	float: left;
+	width: 12px;
+	height: 18px;
+	text-align: center;
+}
+.nomination-info-section {
+
+}
+.nomination-players {
+	margin: 2px;
+}
+.nomination-votes {
+	margin: 2px;
+}
+.username.vote {
+	font-size: smaller;
+}
+.username.player-upvoted {
 	background-color: green;
 }
-.player-downvoted {
+.username.player-downvoted {
 	background-color: red;
 }
 /****************************/

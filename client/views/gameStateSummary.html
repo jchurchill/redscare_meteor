@@ -82,8 +82,33 @@
 	{{#if nominations}}
 		<div class="round-detail-nominations">
 			{{#each roundNominations}}
-				{{!-- TODO --}}
-				<div>{{to_json this}}</div>
+				<div class="nomination">
+					<div class="nomination-number">
+						{{nominationNum}}
+					</div>
+					<div class="nomination-info-section">
+						<div class="nomination-players">
+							<span>
+								<span class="username">{{nominatingUser.username}}</span>
+								nominated:
+							</span>
+							{{#each playersNominated}}
+								<span class="username">{{username}}</span>
+							{{/each}}
+						</div>
+						{{!-- Only show voting outcome if nomination is complete --}}
+						{{#if hasValue approved}}
+						<div class="nomination-votes">
+							<span>Votes:</span>
+							{{#each	playerVotingDetails}}
+								<span class="username vote {{voteClass}}">
+									{{user.username}}
+								</span>
+							{{/each}}
+						</div>
+						{{/if}}
+					</div>
+				</div>
 			{{/each}}
 		</div>
 	{{/if}}
@@ -91,7 +116,6 @@
 		<div class="round-detail-mission">
 			{{#with mission}}
 				{{!-- TODO --}}
-				<div>{{to_json this}}</div>
 			{{/with}}
 		</div>
 	{{/if}}

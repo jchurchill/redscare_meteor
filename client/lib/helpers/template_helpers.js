@@ -6,4 +6,7 @@ Template.registerHelper('parent', function() {
 });
 Template.registerHelper('plural', function(num) {
 	return num != 1;
-})
+});
+Template.registerHelper('hasValue', function(obj) {
+	return obj != null;
+});
