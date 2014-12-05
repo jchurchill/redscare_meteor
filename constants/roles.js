@@ -19,57 +19,74 @@ var roles = RedScare.Constants.roles;
 var alegs = RedScare.Constants.allegiance;
 
 var Role = function(props) {
-	this.allegiance = props.allegiance;
-	this.unique = props.unique;
-	this.mustAppearWith = props.mustAppearWith;
+	_.extend(this, props);
 };
 _.extend(Role.prototype, {
-	isGood: function() { return this.allegiance === ALLEGIANCE.GOOD; },
-	isEvil: function() { return this.allegiance === ALLEGIANCE.EVIL; },
+	isGood: function() { return this.allegiance === alegs.good; },
+	isEvil: function() { return this.allegiance === alegs.evil; },
 });
 
-RedScare.NamespaceManager.define("Constants", {
-	roleDetails: Object.freeze({
-		1 /* normalGood */: new Role({
-			allegiance: alegs.good,
-			mustAppearWith: [],
-			unique: false
-		}),
-		2 /* merlin */: new Role({
-			allegiance: alegs.good,
-			mustAppearWith: [roles.assassin],
-			unique: true
-		}),
-		3 /* percival */: new Role({
-			allegiance: alegs.good,
-			mustAppearWith: [roles.morgana, roles.merlin, roles.assassin],
-			unique: true
-		}),
-		4 /* normalEvil */: new Role({
-			allegiance: alegs.evil,
-			mustAppearWith: [],
-			unique: false
-		}),
-		5 /* assassin */: new Role({
-			allegiance: alegs.evil,
-			mustAppearWith: [roles.merlin],
-			unique: true
-		}),
-		6 /* morgana */: new Role({
-			allegiance: alegs.evil,
-			mustAppearWith: [roles.percival, roles.merlin, roles.assassin],
-			unique: true
-		}),
-		7 /* oberon */: new Role({
-			allegiance: alegs.evil,
-			mustAppearWith: [],
-			unique: true
-		}),
-		8 /* mordred */: new Role({
-			allegiance: alegs.evil,
-			mustAppearWith: [roles.merlin, roles.assassin],
-			unique: true
-		}),
+var roleDetails = [
+	new Role({
+		id: roles.normalGood,
+		allegiance: alegs.good,
+		mustAppearWith: [],
+		unique: false,
+		sees: []
+	}),
+	new Role({
+		id: roles.merlin,
+		allegiance: alegs.good,
+		mustAppearWith: [roles.assassin],
+		unique: true,
+		sees: [roles.normalEvil, roles.assassin, roles.morgana, roles.oberon]
+	}),
+	new Role({
+		id: roles.percival,
+		allegiance: alegs.good,
+		mustAppearWith: [roles.morgana, roles.merlin, roles.assassin],
+		unique: true,
+		sees: [roles.merlin, roles.morgana]
+	}),
+	new Role({
+		id: roles.normalEvil,
+		allegiance: alegs.evil,
+		mustAppearWith: [],
+		unique: false,
+		sees: [roles.normalEvil, roles.assassin, roles.morgana, roles.mordred]
+	}),
+	new Role({
+		id: roles.assassin,
+		allegiance: alegs.evil,
+		mustAppearWith: [roles.merlin],
+		unique: true,
+		sees: [roles.normalEvil, roles.assassin, roles.morgana, roles.mordred]
+	}),
+	new Role({
+		id: roles.morgana,
+		allegiance: alegs.evil,
+		mustAppearWith: [roles.percival, roles.merlin, roles.assassin],
+		unique: true,
+		sees: [roles.normalEvil, roles.assassin, roles.morgana, roles.mordred]
+	}),
+	new Role({
+		id: roles.oberon,
+		allegiance: alegs.evil,
+		mustAppearWith: [],
+		unique: true,
+		sees: []
+	}),
+	new Role({
+		id: roles.mordred,
+		allegiance: alegs.evil,
+		mustAppearWith: [roles.merlin, roles.assassin],
+		unique: true,
+		sees: [roles.normalEvil, roles.assassin, roles.morgana, roles.mordred]
 	})
+];
+
+RedScare.NamespaceManager.define("Constants", {
+	roleDetails: Object.freeze(_.indexBy(roleDetails, _.property("id")))
 });
+
 });

@@ -42,7 +42,7 @@
 	cursor: pointer;
 }
 .round-token.selected-round {
-	box-shadow: 0 0 50px yellow;
+	box-shadow: 0 0 20px black;
 }
 .round-token.disabled {
 	background-color: #CCCCCC;

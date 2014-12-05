@@ -63,12 +63,19 @@ Template.create_game.events({
 		var name = $("#create-game-name").val();
 		var playerCount = parseInt($("#create-game-playercount").val(), 10);
 		var selectedRolesToInclude = _.chain(ROLE_OPTIONS)
-			.filter(function(r) { return $(roleInputSelector(r.name)).is(":checked"); })
+			.filter(function(r) { return $(roleInputSelector(r)).is(":checked"); })
 			.mapMany(_.property("roles"))
-			.mapInto(Constants.roleDetails)
+			.map(function(roleId) {
+				var roleDetails = Constants.roleDetails[roleId];
+				return {
+					id: roleId,
+					isGood: roleDetails.isGood(),
+					isEvil: roleDetails.isEvil()
+				};
+			})
 			.value();
-		var numSelectedGoodRoles = _.filter(selectedRolesToInclude, _.method("isGood")).length;
-		var numSelectedEvilRoles = _.filter(selectedRolesToInclude, _.method("isEvil")).length;
+		var numSelectedGoodRoles = _.filter(selectedRolesToInclude, _.property("isGood")).length;
+		var numSelectedEvilRoles = _.filter(selectedRolesToInclude, _.property("isEvil")).length;
 		var setup = Constants.presets[playerCount];
 		var roleIds = [];
 		var createdGameId;

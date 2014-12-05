@@ -5,9 +5,129 @@
 		</h1>
 	{{else}}
 		<div style="text-align:center;">
-		Some secrets!
-		<br/>
-		{{to_json this.playerRoles}}
+			{{> Template.dynamic template=roleSpecificTemplate }}
 		</div>
 	{{/if}}
+</template>
+
+<template name="starting_normalGood">
+	<div>
+		You are a normal good person!
+	</div>
+	<div>
+		That's all you get to know. Sorry!
+	</div>
+</template>
+
+<template name="starting_merlin">
+	<div>
+		You are merlin!
+	</div>
+	<div>
+		<div>
+			Here are all the bad guys!
+			{{#if gameIncludesRole "mordred"}}<span>(except Mordred)</span>{{/if}}
+		</div>
+		<div>
+			{{#each revealedPlayers}}
+				<span class="username">{{username}}</span>
+			{{/each}}
+		</div>
+	</div>
+</template>
+
+<template name="starting_percival">
+	<div>
+		You are percival!
+	</div>
+	<div>
+		<div>
+			These two are morgana and merlin. But which one is which?
+		</div>
+		<div>
+			{{#each revealedPlayers}}
+				<span class="username">{{username}}</span>
+			{{/each}}
+		</div>
+	</div>
+</template>
+
+<template name="starting_normalEvil">
+	<div>
+		You are a normal evil person!
+	</div>
+	<div>
+		<div>
+			Here are your fellow evildoers!
+			{{#if gameIncludesRole "oberon"}}<span>(except Oberon)</span>{{/if}}
+		</div>
+		<div>
+			{{#each revealedPlayers}}
+				<span class="username">{{username}}</span>
+			{{/each}}
+		</div>
+	</div>
+</template>
+<template name="starting_assassin">
+	<div>
+		You are the assassin!
+	</div>
+	<div>
+		<div>
+			Here are your fellow evildoers!
+			{{#if gameIncludesRole "oberon"}}<span>(except Oberon)</span>{{/if}}
+		</div>
+		<div>
+			{{#each revealedPlayers}}
+				<span class="username">{{username}}</span>
+			{{/each}}
+		</div>
+	</div>
+</template>
+
+<template name="starting_morgana">
+	<div>
+		You are morgana!
+	</div>
+	<div>
+		<div>
+			Here are your fellow evildoers!
+			{{#if gameIncludesRole "oberon"}}<span>(except Oberon)</span>{{/if}}
+		</div>
+		<div>
+			{{#each revealedPlayers}}
+				<span class="username">{{username}}</span>
+			{{/each}}
+		</div>
+	</div>
+</template>
+
+<template name="starting_oberon">
+	<div>
+		You are oberon!
+	</div>
+	<div>
+		You don't get to know any more than that, sorry! Have fun!
+	</div>
+</template>
+
+<template name="starting_mordred">
+	<div>
+		You are mordred!
+	</div>
+	<div>
+		<div>
+			Here are your fellow evildoers!
+			{{#if gameIncludesRole "oberon"}}<span>(except Oberon)</span>{{/if}}
+		</div>
+		<div>
+			{{#each revealedPlayers}}
+				<span class="username">{{username}}</span>
+			{{/each}}
+		</div>
+	</div>
+</template>
+
+<template name="starting_notInGame">
+	Showing players their identities...
 </template>

@@ -15,8 +15,8 @@ _.extend(Game.prototype, {
 	isAbandoned: function() {
 		return !!this.dateAbandoned;
 	},
-	containsRole: function(role) {
-		return _.some(this.roles, function(r) { return r === role.id; });
+	containsRole: function(roleId) {
+		return _.some(this.roles, function(r) { return r === roleId; });
 	},
 	getSetupConstants: function() {
 		return RedScare.Constants.presets[this.playerCount];
