@@ -72,6 +72,13 @@
 }
 .round-general-info-item {
 	margin: 0 5px;
+	display: inline-block;
+}
+.round-votes {
+	padding: 3px;
+	display: inline-block;
+	box-shadow: 0 0 5px #CC8844;
+	border-radius: 3px;
 }
 .vote-count {
 	font-size: larger;
@@ -80,6 +87,8 @@
 }
 .round-vote-tally {
 	margin: 0 20px;
+	font-size: larger;
+	display: inline-block;
 }
 .round-pass-count {
 	color: #228833;
@@ -102,7 +111,7 @@
 .nomination {
 	margin: 5px;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	padding-bottom: 5px;
 	border-bottom: 1px solid #CCCCCC;
 }

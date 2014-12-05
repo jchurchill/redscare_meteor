@@ -53,31 +53,33 @@
 <template name="gameStateSummary_roundDetail">
 	<div class="round-detail-general">
 		<div class="round-general-info">
-			<span class="round-general-info-item">
+			<div class="round-general-info-item">
 				{{nomineeCount}} players on the mission
-			</span>
-			<span class="round-general-info-item">
+			</div>
+			<div class="round-general-info-item">
 				{{#if plural failsRequired}}
 					{{failsRequired}} fail votes required to fail
 				{{else}}
 					{{failsRequired}} fail vote required to fail
 				{{/if}}
-			</span>
+			</div>
 		</div>
-		<div class="round-votes">
+		{{#if mission.outcome}}
 			{{#with mission.outcome}}
-				{{#if this}}
-					<span class="round-vote-tally">
+				<div class="round-votes">
+					<div class="round-vote-tally">
 						<span class="vote-count round-pass-count">{{passCount}}</span> passes
-					</span>
-					<span class="round-vote-tally">
+					</div>
+					<div class="round-vote-tally">
 						<span class="vote-count round-fail-count">{{failCount}}</span> fails
-					</span>
-				{{else}}
-					This round is currently in progress.
-				{{/if}}
+					</div>
+				</div>
 			{{/with}}
-		</div>
+		{{else}}
+			<div class="round-in-progress">
+				This round is currently in progress.
+			</div>
+		{{/if}}
 	</div>
 	{{#if nominations}}
 		<div class="round-detail-nominations">
@@ -111,11 +113,22 @@
 				</div>
 			{{/each}}
 		</div>
+	{{else}}
+		<div class="round-in-progress">
+			No nominations have been made yet.
+		</div>
 	{{/if}}
 	{{#if mission}}
 		<div class="round-detail-mission">
 			{{#with mission}}
-				{{!-- TODO --}}
+				{{#each playersNominated}}
+					<span class="username">{{username}}</span>
+				{{/each}}
+				{{#if outcome}}
+					went on the mission.
+				{{else}}
+					are going on the mission.
+				{{/if}}
 			{{/with}}
 		</div>
 	{{/if}}
