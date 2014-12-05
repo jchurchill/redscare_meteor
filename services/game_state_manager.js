@@ -98,9 +98,9 @@ GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
 		currentNominationNumber: 0
 	};
 
-	var updates = {};
-	updates.currentRound = roundNum;
-	updates["rounds." + roundNum] = round;
+	var updates = { $set: {} };
+	updates.$set.currentRound = roundNum;
+	updates.$set["rounds." + roundNum] = round;
 	
 	Games.update({
 		_id: gameId,
@@ -121,7 +121,7 @@ GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
 function prepareGame(gameId, successCallback) {
 	var game = Games.findOne(gameId, { fields: { players: 1, roles: 1 } });
 	var shuffledRoles = _.shuffle(game.roles);
-	var roleAssignments = _.indexByAndMap(players, _.identity, function(user, i) {
+	var roleAssignments = _.indexByAndMap(game.players, _.identity, function(user, i) {
 		return shuffledRoles[i];
 	});
 	var currentLeader = game.players[_.random(0,game.players.length-1)];
