@@ -1,0 +1,13 @@
+.testing-helpers {
+	margin: 10px;
+	border: 1px solid #CCCCCC;
+	padding: 10px;
+}
+
+.testing-helpers-title {
+	margin-bottom: 10px;
+}
+
+.testing-helpers-buttons {
+	font-size: smaller;
+}

@@ -1,0 +1,37 @@
+<template name="testing_helpers">
+<div class="testing-helpers">
+	<div class="testing-helpers-title">
+		generate a game in a specific state:
+	</div>
+	<div class="testing-helpers-buttons">
+		<button class="waiting-for-players secondary-button"
+			title="A ten-player, all-roles game where users test1 through test9 have already joined.">
+			Waiting for players
+		</button>
+		<button class="revealing-roles secondary-button"
+			title="A ten-player, all-roles game where users are looking at the secrets provided to their specific roles, and all but test10 has not yet indicated he is ready to move on.">
+			Revealing roles
+		</button>
+		<button class="waiting-for-nomination secondary-button"
+			title="A ten-player, all-roles game where users are waiting for the current leader to make the first nomination in round 1. The current leader is test1.">
+			Waiting for nomination
+		</button>
+		<button class="waiting-for-nomination-votes secondary-button"
+			title="A ten-player, all-roles game where users are submitting approvals for the first nomination in the first round, and all but test10 have submitted.">
+			Waiting for approval votes
+		</button>
+		<button class="mission-happening secondary-button"
+			title="A ten-player, all-roles game where after two nominations in the first round, a mission including test2, test3, and test4 has been decided on, and all but test4 have submitted their mission cards.">
+			Mission happening
+		</button>
+		<button class="downvote-chicken secondary-button"
+			title="A ten-player, all-roles game where on the first round, the first four nominations were shot down. The fifth nomination has been made and it's downvote chicken time - test10 doesn't know it, but evil will win if he downvotes in the 5th round, since his is the only vote remaining.">
+			Downvote chicken
+		</button>
+		<button class="assassination-time secondary-button"
+			title="A ten-player, all-roles game where every round had its first nomination approved, and the mission succeeded every time, for three rounds, so now it's time for the assassin to try to choose merlin. The assassin is test7, and merlin is test1.">
+			Assassination time
+		</button>
+	</div>
+</div>
+</template>

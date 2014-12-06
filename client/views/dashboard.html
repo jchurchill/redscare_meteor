@@ -2,6 +2,9 @@
 	<div class="create-game-section">
 		<a href="{{pathFor 'create_game'}}" class="primary-link">Start a new game</a>
 	</div>
+	<div>
+		{{> testing_helpers}}
+	</div>
 	{{#each games}}
 	<div class="game">
 		<a href="{{pathFor 'game'}}">{{name}}</a>

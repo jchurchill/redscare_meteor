@@ -14,7 +14,7 @@ var Presets = RedScare.Constants.presets;
 GameStateManager.abandonGame = function(gameId, userId, successCallback) {
 	var update = {
 		$set: {
-			dateAbandoned: Date.now()
+			dateAbandoned: new Date()
 		}
 	};
 	includeStatusUpdate(update, Status.abandoned);
