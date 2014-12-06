@@ -5,7 +5,28 @@
 		</h1>
 	{{else}}
 		<div style="text-align:center;">
-			{{> Template.dynamic template=roleSpecificTemplate }}
+			<div class="secret-info-section">
+				{{> Template.dynamic template=roleSpecificTemplate }}
+			</div>
+			{{#if isPlayerInGame}}
+				<div class="move-on-section">
+					<button class="ready-starting-game primary-button"
+						disabled="{{#if isReadyToMoveOn}}disabled{{/if}}">
+						{{#if isReadyToMoveOn}}
+							Waiting on others...
+						{{else}}
+							Okay, let's do this
+						{{/if}}
+					</button>
+				</div>
+			{{/if}}
+			<div class="player-status-section">
+				{{#each playerWaitingStatuses}}
+					<div class="username {{#if isReady}}user-ready{{/if}}">
+						{{user.username}}
+					</div>
+				{{/each}}
+			</div>
 		</div>
 	{{/if}}
 </template>
@@ -13,9 +34,6 @@
 <template name="starting_normalGood">
 	<div>
 		You are a normal good person!
-	</div>
-	<div>
-		That's all you get to know. Sorry!
 	</div>
 </template>
 
@@ -25,8 +43,11 @@
 	</div>
 	<div>
 		<div>
-			Here are all the bad guys!
-			{{#if gameIncludesRole "mordred"}}<span>(except Mordred)</span>{{/if}}
+			{{#unless gameIncludesRole "mordred"}}
+				Here are all the bad guys!
+			{{else}}
+				Here are all the bad guys other than mordred!
+			{{/unless}}
 		</div>
 		<div>
 			{{#each revealedPlayers}}
@@ -58,8 +79,11 @@
 	</div>
 	<div>
 		<div>
-			Here are your fellow evildoers!
-			{{#if gameIncludesRole "oberon"}}<span>(except Oberon)</span>{{/if}}
+			{{#unless gameIncludesRole "oberon"}}
+				Here are your other fellow evildoers!
+			{{else}}
+				Here are your other fellow evildoers, except oberon!
+			{{/unless}}
 		</div>
 		<div>
 			{{#each revealedPlayers}}
@@ -74,8 +98,11 @@
 	</div>
 	<div>
 		<div>
-			Here are your fellow evildoers!
-			{{#if gameIncludesRole "oberon"}}<span>(except Oberon)</span>{{/if}}
+			{{#unless gameIncludesRole "oberon"}}
+				Here are your other fellow evildoers!
+			{{else}}
+				Here are your other fellow evildoers, except oberon!
+			{{/unless}}
 		</div>
 		<div>
 			{{#each revealedPlayers}}
@@ -91,8 +118,11 @@
 	</div>
 	<div>
 		<div>
-			Here are your fellow evildoers!
-			{{#if gameIncludesRole "oberon"}}<span>(except Oberon)</span>{{/if}}
+			{{#unless gameIncludesRole "oberon"}}
+				Here are your other fellow evildoers!
+			{{else}}
+				Here are your other fellow evildoers, except oberon!
+			{{/unless}}
 		</div>
 		<div>
 			{{#each revealedPlayers}}
@@ -107,7 +137,7 @@
 		You are oberon!
 	</div>
 	<div>
-		You don't get to know any more than that, sorry! Have fun!
+		You're in the dark about everything!
 	</div>
 </template>
 
@@ -117,8 +147,11 @@
 	</div>
 	<div>
 		<div>
-			Here are your fellow evildoers!
-			{{#if gameIncludesRole "oberon"}}<span>(except Oberon)</span>{{/if}}
+			{{#unless gameIncludesRole "oberon"}}
+				Here are your other fellow evildoers!
+			{{else}}
+				Here are your other fellow evildoers, except oberon!
+			{{/unless}}
 		</div>
 		<div>
 			{{#each revealedPlayers}}

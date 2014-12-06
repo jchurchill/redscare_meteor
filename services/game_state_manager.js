@@ -78,7 +78,8 @@ GameStateManager.beginGame = function(gameId, successCallback) {
 		dateReadyToBegin: { $exists: true }
 	}, {
 		$set: {
-			status: Status.starting
+			status: Status.starting,
+			rounds: {}
 		}
 	},
 	callbackIfSuccessful(function() {
@@ -88,6 +89,21 @@ GameStateManager.beginGame = function(gameId, successCallback) {
 	}));
 };
 
+GameStateManager.markAsSeenSecretInfo = function(gameId, userId, successCallback) {
+	Games.update({
+		_id: gameId,
+		// Do not mark a player as having seen secret info if they're already marked
+		seenSecretInfo: { $not: { $in: [userId] } },
+		// Only players in the game can be marked this way
+		players: { $in: [userId] },
+		// This can only happen during the "starting" phase of the game
+		status: Status.starting
+	}, {
+		$push: { seenSecretInfo: userId }
+	},
+	callbackIfSuccessful(successCallback));
+};
+
 GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
 	var game = Games.findOne(gameId, { fields: { playerCount: 1 } });
 	var settings = Presets[game.playerCount].missions[roundNum];
@@ -95,20 +111,26 @@ GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
 	
 	var round = {
 		nomineeCount: settings.nominations,
+		failsRequired: settings.requiredFails,
 		currentNominationNumber: 0
 	};
 
 	var updates = { $set: {} };
 	updates.$set.currentRound = roundNum;
+	updates.$set.status = Status.nominating;
 	updates.$set["rounds." + roundNum] = round;
-	
+
 	Games.update({
 		_id: gameId,
 		// Setup new round only if:
 		// The current round is one less than the new round num
 		currentRound: roundNum - 1,
-		// The previous round was complete
-		$where: "this.currentRound === 0 || this.rounds[this.currentRound].complete"
+		$and: [
+			// The previous round was complete
+			{ $where: "this.currentRound === 0 || this.rounds[this.currentRound].complete" },
+			// All players have seen their roles (really only applicable for round 1)
+			{ $where: "this.seenSecretInfo.length === this.playerCount" }
+		]
 	},
 	updates,
 	callbackIfSuccessful(successCallback));
@@ -136,7 +158,8 @@ function prepareGame(gameId, successCallback) {
 			currentLeader: currentLeader,
 			currentRound: 0,
 			passedRoundsCount: 0,
-			failedRoundsCount: 0
+			failedRoundsCount: 0,
+			seenSecretInfo: []
 		}
 	},
 	callbackIfSuccessful(successCallback));

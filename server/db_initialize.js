@@ -33,7 +33,7 @@ var makeUserMapping = function(tuples) {
 
 if (Games.find().count() === 0) {
 	// Construct some game setup common to all testing games
-	var sixUsers = _.pluck(Users.find({}, { fields: { _id: 1 }}).fetch(), "_id");
+	var sixUsers = _.pluck(Users.find({}, { limit: 6, fields: { _id: 1 }}).fetch(), "_id");
 	var sixRoles = [
 		Roles.normalGood, Roles.normalGood, Roles.normalGood, Roles.merlin,
 		Roles.normalEvil, Roles.assassin];
@@ -54,7 +54,25 @@ if (Games.find().count() === 0) {
 		playerCount: 6,
 		roles: sixRoles,
 		players: sixUsers.slice(0,5),
-		status: Status.waitingForPlayers,
+		status: Status.waitingForPlayers
+	});
+
+	// A 6 person game that has started and roles are being revealed to everyone
+	// Everyone has confirmed they've seen the roles other than user test6
+	Games.insert({
+		name: "Dustin's Foggy Bottom Game Night - revealing roles",
+		dateCreated: new Date(),
+		creator: sixUsers[0],
+		playerCount: 6,
+		roles: sixRoles,
+		playerRoles: sixRoleAssignments,
+		players: sixUsers,
+		status: Status.starting,
+		currentRound: 0,
+		currentLeader: sixUsers[0],
+		passedRoundsCount: 0,
+		failedRoundsCount: 0,
+		seenSecretInfo: sixUsers.slice(0,5)
 	});
 
 	// A 6 person game that just began and is now in the first nominating phase for round 1
@@ -71,6 +89,7 @@ if (Games.find().count() === 0) {
 		currentLeader: sixUsers[0],
 		passedRoundsCount: 0,
 		failedRoundsCount: 0,
+		seenSecretInfo: sixUsers,
 		rounds: {
 			1: {
 				nomineeCount: 2,
@@ -95,6 +114,7 @@ if (Games.find().count() === 0) {
 		currentLeader: sixUsers[0],
 		passedRoundsCount: 0,
 		failedRoundsCount: 0,
+		seenSecretInfo: sixUsers,
 		rounds: {
 			1: {
 				nomineeCount: 2,
@@ -133,6 +153,7 @@ if (Games.find().count() === 0) {
 		currentLeader: sixUsers[1],
 		passedRoundsCount: 0,
 		failedRoundsCount: 0,
+		seenSecretInfo: sixUsers,
 		rounds: {
 			1: {
 				nomineeCount: 2,
@@ -194,6 +215,7 @@ if (Games.find().count() === 0) {
 		currentLeader: sixUsers[4],
 		passedRoundsCount: 0,
 		failedRoundsCount: 0,
+		seenSecretInfo: sixUsers,
 		rounds: {
 			1: {
 				nomineeCount: 2,
@@ -285,6 +307,7 @@ if (Games.find().count() === 0) {
 		currentLeader: sixUsers[3],
 		passedRoundsCount: 3,
 		failedRoundsCount: 0,
+		seenSecretInfo: sixUsers,
 		rounds: {
 			1: {
 				nomineeCount: 2,

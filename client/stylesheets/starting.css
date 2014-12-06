@@ -1,0 +1,19 @@
+.secret-info-section {
+	margin: 10px;
+	padding: 10px;
+	border-radius: 5px;
+	box-shadow: 0 0 10px #883355;
+	display: inline-block;
+}
+
+.move-on-section {
+	margin: 10px;
+}
+
+.player-status-section {
+	margin: 10px;
+	font-size: smaller;
+}
+.user-ready {
+	background-color: green;
+}

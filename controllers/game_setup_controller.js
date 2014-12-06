@@ -41,6 +41,21 @@ Controller.methods({
 		_private.throwIfNotCurrentUser(userId);
 
 		GameStateManager.removePlayerFromGame(gameId, userId);
+	},
+
+	markPlayerAsReadyToBeginRounds: function(gameId, userId) {
+		var afterPlayerMarkedReady;
+
+		_private.throwIfNotLoggedIn();
+		_private.throwIfNotCurrentUser(userId);
+
+		// After marking a player as ready, move the game onto the first round
+		// if all players are now ready (checked automatically by setupNewRound)
+		afterPlayerMarkedReady = function() {
+			GameStateManager.setupNewRound(gameId, 1);
+		};
+
+		GameStateManager.markAsSeenSecretInfo(gameId, userId, afterPlayerMarkedReady);
 	}
 });
 

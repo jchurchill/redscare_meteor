@@ -4,6 +4,7 @@ var Users = Meteor.users;
 var Constants = RedScare.Constants;
 var Status = Constants.gameStatus;
 var Roles = Constants.roles;
+var GameSetupController = MeteorController.namespace("game_setup");
 
 var ROLE_TEMPLATE_NAMES = {};
 ROLE_TEMPLATE_NAMES[Roles.normalGood] = "starting_normalGood";
@@ -20,11 +21,34 @@ Template.starting.helpers({
 		// Intentional double-equals catches null or undefined, but not 0
 		return this.currentRound == null;
 	},
+	isPlayerInGame: function() {
+		return _.contains(this.players, Meteor.userId());
+	},
 	roleSpecificTemplate: function() {
 		var userId = Meteor.userId();
 		var roleId = this.playerRoles[userId];
-		console.log(this.roles);
 		return ROLE_TEMPLATE_NAMES[roleId] || "starting_notInGame";
+	},
+	isReadyToMoveOn: function() {
+		return _.contains(this.seenSecretInfo, Meteor.userId());
+	},
+	playerWaitingStatuses: function() {
+		var playerUsers = helpers.playerUsers(this.players);
+		var playerIdsReady = this.seenSecretInfo;
+		return _.map(playerUsers, function(user) {
+			return {
+				user: user,
+				isReady: _.contains(playerIdsReady, user._id)
+			};
+		});
+	}
+});
+
+Template.starting.events({
+	"click button.ready-starting-game": function(e) {
+		var gameId = this._id;
+		var userId = Meteor.userId();
+		GameSetupController.call("markPlayerAsReadyToBeginRounds", gameId, userId);
 	}
 });
 
