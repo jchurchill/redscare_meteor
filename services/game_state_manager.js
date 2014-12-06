@@ -12,21 +12,28 @@ var Presets = RedScare.Constants.presets;
 /////////////////////////////////////////////
 
 GameStateManager.abandonGame = function(gameId, userId, successCallback) {
-	Games.update({
+	var update = {
+		$set: {
+			dateAbandoned: Date.now()
+		}
+	};
+	includeStatusUpdate(update, Status.abandoned);
+
+	var condition = {
 		_id: gameId,
 		// Only the creator of the game is allowed to abandon it
 		creator: userId
-	}, {
-		$set: {
-			dateAbandoned: new Date(),
-			status: Status.abandoned
-		}
-	},
-	callbackIfSuccessful(successCallback));
+	};
+
+	Games.update(condition, update, callbackIfSuccessful(successCallback));
 };
 
 GameStateManager.addPlayerToGame = function(gameId, userId, successCallback) {
-	Games.update({
+	var update = {
+		$push: { players: userId }
+	};
+
+	var condition = {
 		_id: gameId,
 		// Do not add a player to a game they're already in
 		players: { $not: { $in: [userId] } },
@@ -34,55 +41,63 @@ GameStateManager.addPlayerToGame = function(gameId, userId, successCallback) {
 		$where: "this.players.length < this.playerCount",
 		// Players cannot be added to an in-progress game
 		status: Status.waitingForPlayers
-	}, {
-		$push: { players: userId }
-	},
-	callbackIfSuccessful(successCallback));
+	};
+
+	Games.update(condition, update, callbackIfSuccessful(successCallback));
 };
 
 GameStateManager.removePlayerFromGame = function(gameId, userId, successCallback) {
-	Games.update({
+	var update = {
+		$pull: { players: userId },
+		$set: { readyForTransition: false }
+	};
+
+	var condition = {
 		_id: gameId,
 		// The creator of a game cannot leave it
 		creator: { $ne: userId },
 		// Players cannot leave an in-progress game
 		status: Status.waitingForPlayers
-	}, {
-		$pull: { players: userId },
-		$unset: { dateReadyToBegin: '' }
-	},
-	callbackIfSuccessful(successCallback));
+	};
+
+	Games.update(condition, update, callbackIfSuccessful(successCallback));
 };
 
 GameStateManager.tryMarkGameAsReady = function(gameId, successCallback) {
-	Games.update({
+	var update = {
+		$set: { readyForTransition: true }
+	};
+
+	var condition = {
 		_id: gameId,
 		// Mark as ready only if status is still waitingForPlayers
 		// and the game is at full capacity
 		status: Status.waitingForPlayers,
 		$where: "this.players.length === this.playerCount"
-	}, {
-		$set: { dateReadyToBegin: new Date() }
-	},
-	callbackIfSuccessful(successCallback));
+	};
+
+	Games.update(condition, update, callbackIfSuccessful(successCallback));
 };
 
 GameStateManager.beginGame = function(gameId, successCallback) {
-	Games.update({
-		_id: gameId,
-		// Begin only if status is still waitingForPlayers
-		// and the game is at full capacity,
-		// and the dateReadyToBegin is set
-		status: Status.waitingForPlayers,
-		$where: "this.players.length === this.playerCount",
-		dateReadyToBegin: { $exists: true }
-	}, {
+	var update = {
 		$set: {
-			status: Status.starting,
 			rounds: {}
 		}
-	},
-	callbackIfSuccessful(function() {
+	};
+	includeStatusUpdate(update, Status.starting);
+
+	var condition = {
+		_id: gameId,
+		// Begin only if status is still waitingForPlayers
+		status: Status.waitingForPlayers,
+		// and the game is at full capacity,
+		$where: "this.players.length === this.playerCount",
+		// and it is readyForTransition
+		readyForTransition: true
+	};
+
+	Games.update(condition, update, callbackIfSuccessful(function() {
 		// Now that we're safely in a state where players cannot be added or removed,
 		// randomly set up the role assignments, and randomly assign the current leader
 		prepareGame(gameId, successCallback);
@@ -90,7 +105,11 @@ GameStateManager.beginGame = function(gameId, successCallback) {
 };
 
 GameStateManager.markAsSeenSecretInfo = function(gameId, userId, successCallback) {
-	Games.update({
+	var update = {
+		$push: { seenSecretInfo: userId }
+	};
+
+	var condition = {
 		_id: gameId,
 		// Do not mark a player as having seen secret info if they're already marked
 		seenSecretInfo: { $not: { $in: [userId] } },
@@ -98,10 +117,9 @@ GameStateManager.markAsSeenSecretInfo = function(gameId, userId, successCallback
 		players: { $in: [userId] },
 		// This can only happen during the "starting" phase of the game
 		status: Status.starting
-	}, {
-		$push: { seenSecretInfo: userId }
-	},
-	callbackIfSuccessful(successCallback));
+	};
+
+	Games.update(condition, update, callbackIfSuccessful(successCallback));
 };
 
 GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
@@ -120,7 +138,7 @@ GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
 	updates.$set.status = Status.nominating;
 	updates.$set["rounds." + roundNum] = round;
 
-	Games.update({
+	var condition = {
 		_id: gameId,
 		// Setup new round only if:
 		// The current round is one less than the new round num
@@ -131,9 +149,9 @@ GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
 			// All players have seen their roles (really only applicable for round 1)
 			{ $where: "this.seenSecretInfo.length === this.playerCount" }
 		]
-	},
-	updates,
-	callbackIfSuccessful(successCallback));
+	};
+
+	Games.update(condition, updates, callbackIfSuccessful(successCallback));
 }
 
 /////////////////////////////////
@@ -147,12 +165,8 @@ function prepareGame(gameId, successCallback) {
 		return shuffledRoles[i];
 	});
 	var currentLeader = game.players[_.random(0,game.players.length-1)];
-	Games.update({
-		_id: gameId,
-		// To be safe, only do this when the status is "starting",
-		// meaning we have moved past the waitingForPlayers phase
-		status: Status.starting
-	}, {
+
+	var update = {
 		$set: {
 			playerRoles: roleAssignments,
 			currentLeader: currentLeader,
@@ -161,8 +175,28 @@ function prepareGame(gameId, successCallback) {
 			failedRoundsCount: 0,
 			seenSecretInfo: []
 		}
-	},
-	callbackIfSuccessful(successCallback));
+	};
+
+	var condition = {
+		_id: gameId,
+		// To be safe, only do this when the status is "starting",
+		// meaning we have moved past the waitingForPlayers phase
+		status: Status.starting
+	};
+
+	Games.update(condition, update, callbackIfSuccessful(successCallback));
+};
+
+
+// Call on an object representing the update rules in a mongo update
+// to also include a status update as part of that update.
+function includeStatusUpdate(update, status) {
+	var statusUpd$set = {
+		status: status,
+		readyForTransition: false
+	};
+	var upd$set = update.$set || {};
+	update.$set = _.extend(upd$set, statusUpd$set);
 };
 
 function callbackIfSuccessful(successCallback) {

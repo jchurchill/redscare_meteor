@@ -1,7 +1,7 @@
 <template name="playersJoining">
 	<div>
 		<h3 class="waiting-for-players-title">
-			{{#unless dateReadyToBegin}}
+			{{#unless readyForTransition}}
 				Waiting for players to join ({{players.length}} / {{playerCount}})
 			{{else}}
 				The game is about to begin...
