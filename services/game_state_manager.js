@@ -49,7 +49,7 @@ GameStateManager.addPlayerToGame = function(gameId, userId, successCallback) {
 GameStateManager.removePlayerFromGame = function(gameId, userId, successCallback) {
 	var update = {
 		$pull: { players: userId },
-		$set: { readyForTransition: false }
+		$unset: { _transition: '' }
 	};
 
 	var condition = {
@@ -63,29 +63,13 @@ GameStateManager.removePlayerFromGame = function(gameId, userId, successCallback
 	Games.update(condition, update, callbackIfSuccessful(successCallback));
 };
 
-GameStateManager.tryMarkGameAsReady = function(gameId, successCallback) {
-	var update = {
-		$set: { readyForTransition: true }
-	};
-
-	var condition = {
-		_id: gameId,
-		// Mark as ready only if status is still waitingForPlayers
-		// and the game is at full capacity
-		status: Status.waitingForPlayers,
-		$where: "this.players.length === this.playerCount"
-	};
-
-	Games.update(condition, update, callbackIfSuccessful(successCallback));
-};
-
-GameStateManager.beginGame = function(gameId, successCallback) {
+GameStateManager.beginGameIfReady = function(gameId, delayMs, successCallback) {
 	var update = {
 		$set: {
+			status: Status.starting,
 			rounds: {}
 		}
 	};
-	includeStatusUpdate(update, Status.starting);
 
 	var condition = {
 		_id: gameId,
@@ -93,11 +77,9 @@ GameStateManager.beginGame = function(gameId, successCallback) {
 		status: Status.waitingForPlayers,
 		// and the game is at full capacity,
 		$where: "this.players.length === this.playerCount",
-		// and it is readyForTransition
-		readyForTransition: true
 	};
 
-	Games.update(condition, update, callbackIfSuccessful(function() {
+	Games.delayedUpdate(delayMs, condition, update, callbackIfSuccessful(function() {
 		// Now that we're safely in a state where players cannot be added or removed,
 		// randomly set up the role assignments, and randomly assign the current leader
 		prepareGame(gameId, successCallback);
@@ -185,18 +167,6 @@ function prepareGame(gameId, successCallback) {
 	};
 
 	Games.update(condition, update, callbackIfSuccessful(successCallback));
-};
-
-
-// Call on an object representing the update rules in a mongo update
-// to also include a status update as part of that update.
-function includeStatusUpdate(update, status) {
-	var statusUpd$set = {
-		status: status,
-		readyForTransition: false
-	};
-	var upd$set = update.$set || {};
-	update.$set = _.extend(upd$set, statusUpd$set);
 };
 
 function callbackIfSuccessful(successCallback) {

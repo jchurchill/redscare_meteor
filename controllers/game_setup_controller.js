@@ -17,20 +17,10 @@ Controller.methods({
 		_private.throwIfNotLoggedIn();
 		_private.throwIfNotCurrentUser(userId);
 
-		// After adding a player to the game, mark the game as "Ready to begin"
-		// if conditions correct (room is full, etc)
+		// After adding a player to the game, schedule
+		// to begin the game if conditions correct (room is full, etc).
 		afterAddPlayer = function() {
-			GameStateManager.tryMarkGameAsReady(gameId, afterGameMarkedReady);
-		};
-
-		// After the game is marked as ready, wait some amount of time,
-		// then transition state to begin game
-		afterGameMarkedReady = function() {
-			if (Meteor.isServer) {
-				Meteor.setTimeout(function() {
-					GameStateManager.beginGame(gameId);
-				}, _private.countdownToGameStartMs);
-			}
+			GameStateManager.beginGameIfReady(gameId, _private.countdownToGameStartMs);
 		};
 
 		GameStateManager.addPlayerToGame(gameId, userId, afterAddPlayer);
