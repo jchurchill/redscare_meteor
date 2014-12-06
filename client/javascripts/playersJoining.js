@@ -1,6 +1,8 @@
-var SESSION = Session.namespace("players-joining");
-SESSION.keys = {};
+Meteor.startup(function() {
+
 var GameSetupController = MeteorController.namespace("game_setup");
+var TemplateSession = Session.namespace("playersJoining");
+var Status = RedScare.Constants.gameStatus;
 
 Template.playersJoining.helpers({
 	currentlyJoinedPlayers: function() {
@@ -29,6 +31,12 @@ Template.playersJoining.helpers({
 	},
 	canLeaveGame: function() {
 		return helpers.canLeaveGame(this);	
+	},
+	gameStarting: function() {
+		return this._transition != null;
+	},
+	secondsUntilTransition: function() {
+		return TemplateSession.get("secondsUntilTransition");
 	}
 });
 
@@ -49,6 +57,51 @@ Template.playersJoining.events({
 	}
 });
 
+// Setup a timer that counts down to the game beginning once the last player has joined
+// This function runs on every change to the game, calculating whether or not it should
+// clear any currently ongoing countdowns, and if it should start a new countdown
+var countdownState = {};
+Template.playersJoining.created = function() {
+	this.autorun(function(c) {
+		var game = Template.currentData();
+
+		// If the game is not in a transitioning state, clear the outstanding
+		// transition countdown if it exists, and don't do anything else
+		if (!game._transition) {
+			Meteor.clearInterval(countdownState.interval);
+			return;
+		}
+
+		// If the currently registered transition is the same as
+		// the game's transition, do nothing
+		if (countdownState.id === game._transition.id) {
+			return;
+		}
+
+		// Else, clear the current one, and set up a new one below
+		Meteor.clearInterval(countdownState.interval);
+
+		// Determine how many seconds remain until transition
+		var msUntilTransition = (game._transition.date - Date.now()) / 1000;
+		var secondsUntilTransition = Math.floor(Math.max(0, msUntilTransition));
+		TemplateSession.set("secondsUntilTransition", secondsUntilTransition);
+
+		// Every second, count down, stopping once 0 is reached
+		function updateCountdown() {
+			var secondsRemaining = TemplateSession.get("secondsUntilTransition") - 1;
+			TemplateSession.set("secondsUntilTransition", secondsRemaining);
+			if (secondsRemaining <= 0) {
+				Meteor.clearInterval(countdownState.interval);
+			}
+		};
+
+		countdownState = {
+			id: game._transition.id,
+			interval: Meteor.setInterval(updateCountdown, 1000)
+		};
+	});
+};
+
 var helpers = {};
 helpers.isCurrentUserJoined = function(game) {
 	return _.contains(game.players, Meteor.userId());
@@ -66,3 +119,5 @@ helpers.canLeaveGame = function(game) {
 		&& helpers.isCurrentUserJoined(game)
 		&& !helpers.isCurrentUserGameCreator(game);
 };
+
+});

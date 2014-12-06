@@ -13,8 +13,10 @@ var makeUserMapping = function(tuples) {
 		function(t) { return t[1]; });
 };
 
-// Construct some game setup common to all testing games
-var tenUsernames = ["test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9", "test10"];
+var tenUsernames = [
+	"test1", "test2", "test3", "test4", "test5",
+	"test6", "test7", "test8", "test9", "test10"];
+
 var tenUsers = _.chain(
 		Users.find(
 			{ username: { $in: tenUsernames } },
@@ -25,10 +27,11 @@ var tenUsers = _.chain(
 	.pluck("_id")
 	.value();
 
-var sixRoles = [
+// Construct some game setup common to all testing games
+var tenRoles = [
 	Roles.normalGood, Roles.normalGood, Roles.normalGood, Roles.normalGood, Roles.merlin, Roles.percival,
 	Roles.assassin, Roles.morgana, Roles.oberon, Roles.mordred];
-var sixRoleAssignments = makeUserMapping([
+var tenRoleAssignments = makeUserMapping([
 		[tenUsers[0], Roles.merlin],
 		[tenUsers[1], Roles.percival],
 		[tenUsers[2], Roles.normalGood],
@@ -50,7 +53,7 @@ Template.testing_helpers.events({
 			dateCreated: new Date(),
 			creator: tenUsers[0],
 			playerCount: 10,
-			roles: sixRoles,
+			roles: tenRoles,
 			players: tenUsers.slice(0,9),
 			status: Status.waitingForPlayers
 		});
@@ -63,8 +66,8 @@ Template.testing_helpers.events({
 			dateCreated: new Date(),
 			creator: tenUsers[0],
 			playerCount: 10,
-			roles: sixRoles,
-			playerRoles: sixRoleAssignments,
+			roles: tenRoles,
+			playerRoles: tenRoleAssignments,
 			players: tenUsers,
 			status: Status.starting,
 			currentRound: 0,
@@ -81,8 +84,8 @@ Template.testing_helpers.events({
 			dateCreated: new Date(),
 			creator: tenUsers[0],
 			playerCount: 10,
-			roles: sixRoles,
-			playerRoles: sixRoleAssignments,
+			roles: tenRoles,
+			playerRoles: tenRoleAssignments,
 			players: tenUsers,
 			status: Status.nominating,
 			currentRound: 1,
@@ -107,9 +110,9 @@ Template.testing_helpers.events({
 			dateCreated: new Date(),
 			creator: tenUsers[0],
 			playerCount: 10,
-			roles: sixRoles,
+			roles: tenRoles,
 			players: tenUsers,
-			playerRoles: sixRoleAssignments,
+			playerRoles: tenRoleAssignments,
 			status: Status.nominationVoting,
 			currentRound: 1,
 			currentLeader: tenUsers[0],
@@ -151,9 +154,9 @@ Template.testing_helpers.events({
 			dateCreated: new Date(),
 			creator: tenUsers[0],
 			playerCount: 10,
-			roles: sixRoles,
+			roles: tenRoles,
 			players: tenUsers,
-			playerRoles: sixRoleAssignments,
+			playerRoles: tenRoleAssignments,
 			status: Status.missionVoting,
 			currentRound: 1,
 			currentLeader: tenUsers[1],
@@ -223,9 +226,9 @@ Template.testing_helpers.events({
 			dateCreated: new Date(),
 			creator: tenUsers[0],
 			playerCount: 10,
-			roles: sixRoles,
+			roles: tenRoles,
 			players: tenUsers,
-			playerRoles: sixRoleAssignments,
+			playerRoles: tenRoleAssignments,
 			status: Status.nominationVoting,
 			currentRound: 1,
 			currentLeader: tenUsers[4],
@@ -336,9 +339,9 @@ Template.testing_helpers.events({
 			dateCreated: new Date(),
 			creator: tenUsers[0],
 			playerCount: 10,
-			roles: sixRoles,
+			roles: tenRoles,
 			players: tenUsers,
-			playerRoles: sixRoleAssignments,
+			playerRoles: tenRoleAssignments,
 			status: Status.assassination,
 			currentRound: 3,
 			currentLeader: tenUsers[3],

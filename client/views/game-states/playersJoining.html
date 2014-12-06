@@ -1,11 +1,12 @@
 <template name="playersJoining">
 	<div>
 		<h3 class="waiting-for-players-title">
-			{{#unless _transition}}
+			<span class="{{#if gameStarting}}hidden{{/if}}">
 				Waiting for players to join ({{players.length}} / {{playerCount}})
-			{{else}}
-				The game is about to begin... ({{_transition.date}})
-			{{/unless}}
+			</span>
+			<span class="{{#unless gameStarting}}hidden{{/unless}}">
+				This game will begin in {{secondsUntilTransition}}...
+			</span>
 		</h3>
 		<div class="join-buttons-section">
 			<button class="join-game-button primary-button"
