@@ -79,7 +79,7 @@ GameStateManager.beginGameIfReady = function(gameId, delayMs, successCallback) {
 		$where: "this.players.length === this.playerCount",
 	};
 
-	Games.delayedUpdate(delayMs, condition, update, callbackIfSuccessful(function() {
+	Games.delayedUpdate("gameStart", delayMs, condition, update, callbackIfSuccessful(function() {
 		// Now that we're safely in a state where players cannot be added or removed,
 		// randomly set up the role assignments, and randomly assign the current leader
 		prepareGame(gameId, successCallback);
@@ -133,7 +133,7 @@ GameStateManager.setupNewRound = function(gameId, roundNum, delayMs, successCall
 		]
 	};
 
-	Games.delayedUpdate(delayMs, condition, updates, callbackIfSuccessful(successCallback));
+	Games.delayedUpdate("roundStart", delayMs, condition, updates, callbackIfSuccessful(successCallback));
 }
 
 /////////////////////////////////

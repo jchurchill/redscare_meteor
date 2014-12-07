@@ -43,7 +43,7 @@ Template.starting.helpers({
 		});
 	},
 	gameReadyToMoveOn: function() {
-		return this._transition != null;
+		return this.pendingTransition("roundStart") != null;
 	}
 });
 

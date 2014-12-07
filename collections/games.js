@@ -21,6 +21,11 @@ _.extend(Game.prototype, {
 	getSetupConstants: function() {
 		return RedScare.Constants.presets[this.playerCount];
 	},
+	pendingTransition: function(key) {
+		var trs = this._transition;
+		if (trs) { return trs[key]; }
+		return;
+	},
 	getNextLeader: function() {
 		var leaderIndex = this.players.indexOf(this.currentLeader);
 		if (leaderIndex < 0 || this.players.length !== this.playerCount) {

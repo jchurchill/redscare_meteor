@@ -34,7 +34,7 @@ Template.playersJoining.helpers({
 		return helpers.canLeaveGame(this);	
 	},
 	gameStarting: function() {
-		return this._transition != null;
+		return this.pendingTransition("gameStart") != null;
 	},
 	secondsUntilTransition: function() {
 		return TemplateSession.get("secondsUntilTransition");
@@ -65,7 +65,7 @@ Template.playersJoining.created = function() {
 	TransitionUtilities.setupTransitionCountdown(
 		/* template */ this,
 		/* intervalMs */ 1000,
-		/* getTransition */ function(dc) { return dc._transition; },
+		/* getTransition */ function(dc) { return dc.pendingTransition("gameStart"); },
 		/* countdownIntervalFn */ function(remainingMs) {
 			var remainingSeconds = Math.floor(remainingMs / 1000);
 			TemplateSession.set("secondsUntilTransition", remainingSeconds);
