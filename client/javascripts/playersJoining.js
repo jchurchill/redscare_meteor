@@ -1,6 +1,7 @@
 Meteor.startup(function() {
 
 var GameSetupController = MeteorController.namespace("game_setup");
+var TransitionUtilities = RedScare.Services.TransitionUtilities;
 var TemplateSession = Session.namespace("playersJoining");
 var Status = RedScare.Constants.gameStatus;
 
@@ -60,46 +61,15 @@ Template.playersJoining.events({
 // Setup a timer that counts down to the game beginning once the last player has joined
 // This function runs on every change to the game, calculating whether or not it should
 // clear any currently ongoing countdowns, and if it should start a new countdown
-var countdownState = {};
 Template.playersJoining.created = function() {
-	this.autorun(function(c) {
-		var game = Template.currentData();
-
-		// If the game is not in a transitioning state, clear the outstanding
-		// transition countdown if it exists, and don't do anything else
-		if (!game._transition) {
-			Meteor.clearInterval(countdownState.interval);
-			return;
-		}
-
-		// If the currently registered transition is the same as
-		// the game's transition, do nothing
-		if (countdownState.id === game._transition.id) {
-			return;
-		}
-
-		// Else, clear the current one, and set up a new one below
-		Meteor.clearInterval(countdownState.interval);
-
-		// Determine how many seconds remain until transition
-		var msUntilTransition = (game._transition.date - Date.now()) / 1000;
-		var secondsUntilTransition = Math.floor(Math.max(0, msUntilTransition));
-		TemplateSession.set("secondsUntilTransition", secondsUntilTransition);
-
-		// Every second, count down, stopping once 0 is reached
-		function updateCountdown() {
-			var secondsRemaining = TemplateSession.get("secondsUntilTransition") - 1;
-			TemplateSession.set("secondsUntilTransition", secondsRemaining);
-			if (secondsRemaining <= 0) {
-				Meteor.clearInterval(countdownState.interval);
-			}
-		};
-
-		countdownState = {
-			id: game._transition.id,
-			interval: Meteor.setInterval(updateCountdown, 1000)
-		};
-	});
+	TransitionUtilities.setupTransitionCountdown(
+		/* template */ this,
+		/* intervalMs */ 1000,
+		/* getTransition */ function(dc) { return dc._transition; },
+		/* countdownIntervalFn */ function(remainingMs) {
+			var remainingSeconds = Math.floor(remainingMs / 1000);
+			TemplateSession.set("secondsUntilTransition", remainingSeconds);
+		});
 };
 
 var helpers = {};
