@@ -452,7 +452,10 @@ Template.testing_helpers.events({
 					}
 				}
 			},
-			assassination: { /* victim not chosen yet */ }
+			assassination: {
+				assassin: tenUsers[6]
+				/* victim: <userId> */
+			}
 		});
 	},
 });
