@@ -104,10 +104,10 @@ GameStateManager.markAsSeenSecretInfo = function(gameId, userId, successCallback
 	Games.update(condition, update, callbackIfSuccessful(successCallback));
 };
 
-GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
+GameStateManager.setupNewRound = function(gameId, roundNum, delayMs, successCallback) {
 	var game = Games.findOne(gameId, { fields: { playerCount: 1 } });
 	var settings = Presets[game.playerCount].missions[roundNum];
-	if (!settings) { return; } // No such round (i.e., roundNum not in 1-5)
+	if (!settings) { throw "No such round: " + roundNum; } // (i.e., roundNum not in 1-5)
 	
 	var round = {
 		nomineeCount: settings.nominations,
@@ -133,7 +133,7 @@ GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
 		]
 	};
 
-	Games.update(condition, updates, callbackIfSuccessful(successCallback));
+	Games.delayedUpdate(delayMs, condition, updates, callbackIfSuccessful(successCallback));
 }
 
 /////////////////////////////////

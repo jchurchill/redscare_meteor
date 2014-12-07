@@ -8,18 +8,24 @@
 			<div class="secret-info-section">
 				{{> Template.dynamic template=roleSpecificTemplate }}
 			</div>
-			{{#if isPlayerInGame}}
+			{{#unless gameReadyToMoveOn}}
+				{{#if isPlayerInGame}}
+					<div class="move-on-section">
+						<button class="ready-starting-game primary-button"
+							disabled="{{#if isReadyToMoveOn}}disabled{{/if}}">
+							{{#if isReadyToMoveOn}}
+								Waiting on others...
+							{{else}}
+								Okay, let's do this
+							{{/if}}
+						</button>
+					</div>
+				{{/if}}
+			{{else}}
 				<div class="move-on-section">
-					<button class="ready-starting-game primary-button"
-						disabled="{{#if isReadyToMoveOn}}disabled{{/if}}">
-						{{#if isReadyToMoveOn}}
-							Waiting on others...
-						{{else}}
-							Okay, let's do this
-						{{/if}}
-					</button>
+					Everyone's ready! Let's do this!
 				</div>
-			{{/if}}
+			{{/unless}}
 			<div class="player-status-section">
 				{{#each playerWaitingStatuses}}
 					<div class="username {{#if isReady}}user-ready{{/if}}">

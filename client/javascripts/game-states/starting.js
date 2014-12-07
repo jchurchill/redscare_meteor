@@ -41,6 +41,9 @@ Template.starting.helpers({
 				isReady: _.contains(playerIdsReady, user._id)
 			};
 		});
+	},
+	gameReadyToMoveOn: function() {
+		return this._transition != null;
 	}
 });
 

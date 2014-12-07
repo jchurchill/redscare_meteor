@@ -42,7 +42,7 @@ Controller.methods({
 		// After marking a player as ready, move the game onto the first round
 		// if all players are now ready (checked automatically by setupNewRound)
 		afterPlayerMarkedReady = function() {
-			GameStateManager.setupNewRound(gameId, 1);
+			GameStateManager.setupNewRound(gameId, 1, _private.countdownToRoundStartMs);
 		};
 
 		GameStateManager.markAsSeenSecretInfo(gameId, userId, afterPlayerMarkedReady);
@@ -54,9 +54,8 @@ Controller.methods({
 //////////////////////////////////////
 var _private = {};
 
-// TODO: if front end wants access to this to setup some kind
-// TODO: of countdown, make this more accessible
 _private.countdownToGameStartMs = 5000;
+_private.countdownToRoundStartMs = 3000;
 
 _private.throwIfNotLoggedIn = function() {
 	if (!Meteor.userId()) {
