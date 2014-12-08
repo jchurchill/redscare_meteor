@@ -130,7 +130,8 @@ GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
 	var round = {
 		nomineeCount: settings.nominations,
 		failsRequired: settings.requiredFails,
-		currentNominationNumber: 0
+		currentNominationNumber: 0,
+		nominations: {}
 	};
 
 	var updates = { $set: {} };
@@ -151,8 +152,43 @@ GameStateManager.setupNewRound = function(gameId, roundNum, successCallback) {
 		]
 	};
 
-	Games.update(condition, updates, callbackIfSuccessful(successCallback));
-}
+	Games.update(condition, updates, callbackIfSuccessful(function() {
+		GameStateManager.setupNextNomination(gameId, roundNum);
+	}));
+
+};
+
+GameStateManager.setupNextNomination = function(gameId, roundNum, successCallback) {
+	// need to read in the current nomination number
+	var roundKey = "rounds." + roundNum;
+
+	var fields = {
+		fields: {
+			roundKey: 1
+		}
+	};
+
+	var currentRound = Games.findOne(gameId, fields);
+	console.log("current round!!! ", currentRound);
+	// // need to update currentNominationNumber 
+	// game.rounds[currentRound].currentNominationNumber = nextNomNumber;
+	
+	// // the new nomination should look like this
+	// game.rounds[currentRound].nominations[nextNom] = {
+	// 	leader: ,
+	// 	nominees: [],
+	// 	votes: {}
+	// }
+
+	// var conditions = {
+	// 	_id: gameId,
+
+	// };
+
+	// var updates = { $set: {} };
+	// updates.$set.["rounds."+roundNum].currentNominationNumber
+	// Games.update(condition, updates, callbackIfSuccessful(successCallback));
+};
 
 /////////////////////////////////
 // Private methods

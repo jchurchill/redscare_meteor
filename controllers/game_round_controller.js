@@ -2,9 +2,14 @@ Meteor.startup(function() {
 // Usings
 var Games = RedScare.Collections.Games;
 var Controller = MeteorController.namespace("game_round");
+var GameStateManager = RedScare.Services.GameStateManager;
 
 Controller.methods({
-	
+	nominateUser: function(userId, leaderId) {
+		console.log("leader", leaderId," is nominating this user: ", userId);
+		// don't let it go through if the leaderId doesnt match the Game's currentLeader
+		// GameStateManager.setupNextNomination("EyKf7WD7rBbvCjqjk", 1);
+	}
 });
 
 //////////////////////////////////////

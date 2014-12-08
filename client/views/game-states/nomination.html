@@ -1,8 +1,14 @@
 <Template name="nomination">
 	{{#if isCurrentUserLeader}}
 		<div>Please nominate people for the mission</div>
+
 	{{else}}
 		<div>Waiting for leader to nominate</div>
 	{{/if}}
-	<div>Current Nominees: </div>
+	<div>Players: </div>
+	<ul>
+		{{#each getPlayers}}
+			<li {{getNominationOptionAttributes _id}}>{{username}}</li>
+		{{/each}}
+	</ul>
 </Template>
