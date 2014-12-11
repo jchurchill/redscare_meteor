@@ -16,8 +16,12 @@ var makeUserMapping = function(tuples) {
 var tenUsernames = [
 	"test1", "test2", "test3", "test4", "test5",
 	"test6", "test7", "test8", "test9", "test10"];
+var tenRoles = [
+	Roles.normalGood, Roles.normalGood, Roles.normalGood, Roles.normalGood, Roles.merlin, Roles.percival,
+	Roles.assassin, Roles.morgana, Roles.oberon, Roles.mordred];
 
-var tenUsers = _.chain(
+var getTenUsers = function() {
+	return _.chain(
 		Users.find(
 			{ username: { $in: tenUsernames } },
 			{ limit: 10, fields: { _id: 1, username: 1 } }
@@ -26,12 +30,12 @@ var tenUsers = _.chain(
 	.sortBy(function(u) { return parseInt(u.username.slice(4), 10); })
 	.pluck("_id")
 	.value();
+};
 
 // Construct some game setup common to all testing games
-var tenRoles = [
-	Roles.normalGood, Roles.normalGood, Roles.normalGood, Roles.normalGood, Roles.merlin, Roles.percival,
-	Roles.assassin, Roles.morgana, Roles.oberon, Roles.mordred];
-var tenRoleAssignments = makeUserMapping([
+
+var getTenRoleAssignments = function(tenUsers) {
+	return makeUserMapping([
 		[tenUsers[0], Roles.merlin],
 		[tenUsers[1], Roles.percival],
 		[tenUsers[2], Roles.normalGood],
@@ -43,10 +47,12 @@ var tenRoleAssignments = makeUserMapping([
 		[tenUsers[8], Roles.oberon],
 		[tenUsers[9], Roles.mordred],
 	]);
+};
 
 // Game creation possibilities
 Template.testing_helpers.events({
 	"click button.waiting-for-players": function() {
+		var tenUsers = getTenUsers();
 		// A 10-person game that's waiting for one more player
 		TestGameCreationController.call("insert", {
 			name: "[test] Waiting for players - " + new Date(),
@@ -59,6 +65,8 @@ Template.testing_helpers.events({
 		});
 	},
 	"click button.revealing-roles": function() {
+		var tenUsers = getTenUsers();
+		var tenRoleAssignments = getTenRoleAssignments(tenUsers);
 		// A 10 person game that has started and roles are being revealed to everyone
 		// Everyone has confirmed they've seen the roles other than user test10
 		TestGameCreationController.call("insert", {
@@ -78,6 +86,8 @@ Template.testing_helpers.events({
 		});
 	},
 	"click button.waiting-for-nomination": function() {
+		var tenUsers = getTenUsers();
+		var tenRoleAssignments = getTenRoleAssignments(tenUsers);
 		// A 10 person game that just began and is now in the first nominating phase for round 1
 		TestGameCreationController.call("insert", {
 			name: "[test] Waiting for nomination - " + new Date(),
@@ -103,6 +113,8 @@ Template.testing_helpers.events({
 		});
 	},
 	"click button.waiting-for-nomination-votes": function() {
+		var tenUsers = getTenUsers();
+		var tenRoleAssignments = getTenRoleAssignments(tenUsers);
 		// A 10 person game that just began, the leader has nominated the first set of people,
 		// and players are now doing approval voting for it
 		TestGameCreationController.call("insert", {
@@ -146,6 +158,8 @@ Template.testing_helpers.events({
 		});
 	},
 	"click button.mission-happening": function() {
+		var tenUsers = getTenUsers();
+		var tenRoleAssignments = getTenRoleAssignments(tenUsers);
 		// A 10 person game that had its first round first nomination get rejected,
 		// but then its first round second nomination was approved
 		// and the nominees are now going on a mission
@@ -218,6 +232,8 @@ Template.testing_helpers.events({
 		});
 	},
 	"click button.downvote-chicken": function() {
+		var tenUsers = getTenUsers();
+		var tenRoleAssignments = getTenRoleAssignments(tenUsers);
 		// A 10 person game where on the first round no one approved any missions
 		// so now the 5th nomination has been made and its downvote chicken time,
 		// and the difference between pass and lose relies on only one final uncast vote
@@ -331,6 +347,8 @@ Template.testing_helpers.events({
 		});
 	},
 	"click button.assassination-time": function() {
+		var tenUsers = getTenUsers();
+		var tenRoleAssignments = getTenRoleAssignments(tenUsers);
 		// A 10 person game where every round had its first nomination approved
 		// and the nomination succeeded the mission every time for three rounds,
 		// so now it's time for the assassin to try to choose merlin
