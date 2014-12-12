@@ -4,6 +4,19 @@ RedScare.NamespaceManager.define("Collections", {
 	})
 });
 
+// if (Meteor.isServer) {
+// 	Meteor.publish("games", function(gameId) {
+// 		return RedScare.Collections.Games.findOne(gameId, {
+// 			// The following is "secret", and should not be included with a normal subscription
+// 			fields: {
+// 				playerRoles: 0, // Revealed only when the game is over
+// 				// Nomination votes, revealed only when outcome of nomination has been decided
+// 				// Mission votes, revealed only when the game is over
+// 			}
+// 		});
+// 	});
+// }
+
 var Game = function(doc) {
 	_.extend(this, doc);
 	// Map rounds into the Round transform
