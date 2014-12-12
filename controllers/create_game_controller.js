@@ -1,6 +1,6 @@
 Meteor.startup(function() {
 // Usings
-var Games = RedScare.Collections.Games;
+var Collections = RedScare.Collections;
 var Controller = MeteorController.namespace("create_game");
 
 Controller.methods({
@@ -35,7 +35,7 @@ Controller.methods({
 		doc.status = RedScare.Constants.gameStatus.waitingForPlayers;
 
 		// Insert, return new _id
-		return Games.insert(doc);
+		return Collections.Games.insert(doc);
 	}
 });
 

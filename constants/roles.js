@@ -1,6 +1,7 @@
-// Constants.roles
-RedScare.NamespaceManager.define("Constants", {
-	roles: Object.freeze({
+RedScare.NamespaceManager.enum(
+	"Constants",
+	"roles",
+	{
 		normalGood: 1,
 		merlin: 2,
 		percival: 3,
@@ -9,14 +10,14 @@ RedScare.NamespaceManager.define("Constants", {
 		morgana: 6,
 		oberon: 7,
 		mordred: 8
-	})
-});
+	}
+);
 
-// Constants.roleDetails
 Meteor.startup(function() {
 
-var roles = RedScare.Constants.roles;
-var alegs = RedScare.Constants.allegiance;
+var Constants = RedScare.Constants;
+var roles = Constants.roles;
+var alegs = Constants.allegiance;
 
 var Role = function(props) {
 	_.extend(this, props);
@@ -85,8 +86,6 @@ var roleDetails = [
 	})
 ];
 
-RedScare.NamespaceManager.define("Constants", {
-	roleDetails: Object.freeze(_.indexBy(roleDetails, _.property("id")))
-});
+Constants.add("roleDetails", Object.freeze(_.indexBy(roleDetails, _.property("id"))));
 
 });

@@ -4,7 +4,6 @@ Meteor.startup(function() {
  * Their username is test{X}, where X in 1 - 11
  * Their password is equal to their username
  * Their email is their username @test.com */
-(function(){
 var Users = Meteor.users;
 if (Users.find().count() === 0) {
 	_.each(_.range(1,12), function(i) {
@@ -15,6 +14,5 @@ if (Users.find().count() === 0) {
 		});
 	});
 }
-}());
 
 });

@@ -1,10 +1,10 @@
 Meteor.startup(function() {
 // Usings
-var Games = RedScare.Collections.Games;
+var Collections = RedScare.Collections;
 
 Template.dashboard.helpers({
 	games: function () {
-		return Games.find({
+		return Collections.Games.find({
 			dateAbandoned: { $exists: false }
 		}, {
 			sort: [["dateCreated", "desc"]]

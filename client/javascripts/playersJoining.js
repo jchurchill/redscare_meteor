@@ -3,7 +3,6 @@ Meteor.startup(function() {
 var GameSetupController = MeteorController.namespace("game_setup");
 var TransitionUtilities = RedScare.Services.TransitionUtilities;
 var TemplateSession = Session.namespace("playersJoining");
-var Status = RedScare.Constants.gameStatus;
 
 Template.playersJoining.helpers({
 	currentlyJoinedPlayers: function() {

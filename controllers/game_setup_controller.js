@@ -1,7 +1,5 @@
 Meteor.startup(function() {
 // Usings
-var Games = RedScare.Collections.Games;
-var Status = RedScare.Constants.gameStatus;
 var GameStateManager = RedScare.Services.GameStateManager;
 var Controller = MeteorController.namespace("game_setup");
 

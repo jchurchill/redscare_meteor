@@ -1,8 +1,14 @@
-RedScare.NamespaceManager.define("Collections", {
-	Games: new Mongo.Collection("games", { 
+RedScare.NamespaceManager.define("Collections");
+
+Meteor.startup(function() {
+
+var Collections = RedScare.Collections;
+
+Collections.add("Games",
+	new Mongo.Collection("games", { 
 		transform: function(doc) { return new Game(doc); }
 	})
-});
+);
 
 // if (Meteor.isServer) {
 // 	Meteor.publish("games", function(gameId) {
@@ -107,4 +113,7 @@ var Mission = function(missionDoc) {
 	_.extend(this, missionDoc);
 };
 _.extend(Mission.prototype, {
+});
+
+
 });

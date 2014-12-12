@@ -1,3 +1,5 @@
+Meteor.startup(function() {
+
 // Constants
 var SESSION = {
 	LOCAL: Session.namespace("login-or-signup")
@@ -8,10 +10,10 @@ SESSION.keys = {
 	errors: "errors"
 };
 
-Meteor.startup(function() {
-	SESSION.signup.setDefault(SESSION.keys.errors, {});
-	SESSION.login.setDefault(SESSION.keys.errors, {});
-});
+
+SESSION.signup.setDefault(SESSION.keys.errors, {});
+SESSION.login.setDefault(SESSION.keys.errors, {});
+
 
 // Template setup
 Template.loginOrSignup.helpers({
@@ -198,3 +200,5 @@ var clearAllErrors = function() {
 	SESSION.signup.set(SESSION.keys.errors, {});
 	SESSION.login.set(SESSION.keys.errors, {});
 };
+
+});

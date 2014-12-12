@@ -1,15 +1,15 @@
 Meteor.startup(function() {
 // Usings
 var Users = Meteor.users;
-var Status = RedScare.Constants.gameStatus;
+var Constants = RedScare.Constants;
 
 // Constants
 var STARTED_STATES = [
-	Status.nominating,
-	Status.nominationVoting,
-	Status.missionVoting,
-	Status.assassination,
-	Status.gameOver
+	Constants.gameStatus.nominating,
+	Constants.gameStatus.nominationVoting,
+	Constants.gameStatus.missionVoting,
+	Constants.gameStatus.assassination,
+	Constants.gameStatus.gameOver
 ];
 
 Template.game.helpers({
@@ -26,21 +26,21 @@ Template.game.helpers({
 		// So initially, none of the Game methods exist
 		// Thus, the reason for this.method && this.method(), so we wont keep getting "undefined is not a function"
 		switch (this.status) {
-			case Status.abandoned:
+			case Constants.gameStatus.abandoned:
 				return "abandoned";
-			case Status.waitingForPlayers:
+			case Constants.gameStatus.waitingForPlayers:
 				return "playersJoining";
-			case Status.starting:
+			case Constants.gameStatus.starting:
 				return "starting";
-			case Status.nominating:
+			case Constants.gameStatus.nominating:
 				return "nomination";
-			case Status.nominationVoting:
+			case Constants.gameStatus.nominationVoting:
 				return "voting";
-			case Status.missionVoting:
+			case Constants.gameStatus.missionVoting:
 				return "mission";
-			case Status.assassination:
+			case Constants.gameStatus.assassination:
 				return "assassination";
-			case Status.gameOver:
+			case Constants.gameStatus.gameOver:
 				return "gameOver";
 			default:
 				throw "Game status unrecognized: " + this.status;

@@ -32,7 +32,7 @@ var TransitionUtilities = RedScare.Services.TransitionUtilities;
  *			});
  *	};
  */
-TransitionUtilities.setupTransitionCountdown = function(template, intervalMs, getTransitionFromTemplateDataContext, countdownIntervalFn) {
+TransitionUtilities.add("setupTransitionCountdown", function(template, intervalMs, getTransitionFromTemplateDataContext, countdownIntervalFn) {
 	var countdownState = {};
 	template.autorun(function(c) {
 		var transition = getTransitionFromTemplateDataContext(Template.currentData());
@@ -75,7 +75,28 @@ TransitionUtilities.setupTransitionCountdown = function(template, intervalMs, ge
 			interval: Meteor.setInterval(updateCountdown, intervalMs)
 		};
 	});
-};
+});
+
+/*
+ * Cancel any pending transitions for the provided key(s).
+ */
+TransitionUtilities.add("haveUpdateCancelTransitions", function(keys, mongoModifier) {
+	// Mix the transition unset with whatever other updates are on mongoModifier
+	mongoModifier.$unset = mongoModifier.$unset || {};
+	_.each([].concat(keys), function(k) {
+		var mongoTransitionKey = "_transition." + k;
+		mongoModifier.$unset[mongoTransitionKey] = '';
+	});
+});
+
+/*
+ * Call on a mongo update modifier to have the update cancel any pending transitions on this object.
+ */
+TransitionUtilities.add("haveUpdateCancelAllTransitions", function(key, mongoModifier) {
+	// Mix the transition unset with whatever other updates are on mongoModifier
+	mongoModifier.$unset = mongoModifier.$unset || {};
+	mongoModifier.$unset._transition = '';
+});
 
 /////////////////////////////////
 // Private methods

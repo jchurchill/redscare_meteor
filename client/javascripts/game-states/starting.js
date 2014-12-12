@@ -2,19 +2,17 @@ Meteor.startup(function() {
 // Usings
 var Users = Meteor.users;
 var Constants = RedScare.Constants;
-var Status = Constants.gameStatus;
-var Roles = Constants.roles;
 var GameSetupController = MeteorController.namespace("game_setup");
 
 var ROLE_TEMPLATE_NAMES = {};
-ROLE_TEMPLATE_NAMES[Roles.normalGood] = "starting_normalGood";
-ROLE_TEMPLATE_NAMES[Roles.merlin] = "starting_merlin";
-ROLE_TEMPLATE_NAMES[Roles.percival] = "starting_percival";
-ROLE_TEMPLATE_NAMES[Roles.normalEvil] = "starting_normalEvil";
-ROLE_TEMPLATE_NAMES[Roles.assassin] = "starting_assassin";
-ROLE_TEMPLATE_NAMES[Roles.morgana] = "starting_morgana";
-ROLE_TEMPLATE_NAMES[Roles.oberon] = "starting_oberon";
-ROLE_TEMPLATE_NAMES[Roles.mordred] = "starting_mordred";
+ROLE_TEMPLATE_NAMES[Constants.roles.normalGood] = "starting_normalGood";
+ROLE_TEMPLATE_NAMES[Constants.roles.merlin] = "starting_merlin";
+ROLE_TEMPLATE_NAMES[Constants.roles.percival] = "starting_percival";
+ROLE_TEMPLATE_NAMES[Constants.roles.normalEvil] = "starting_normalEvil";
+ROLE_TEMPLATE_NAMES[Constants.roles.assassin] = "starting_assassin";
+ROLE_TEMPLATE_NAMES[Constants.roles.morgana] = "starting_morgana";
+ROLE_TEMPLATE_NAMES[Constants.roles.oberon] = "starting_oberon";
+ROLE_TEMPLATE_NAMES[Constants.roles.mordred] = "starting_mordred";
 
 Template.starting.helpers({
 	settingUpGame: function() {

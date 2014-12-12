@@ -2,7 +2,6 @@ Meteor.startup(function() {
 // Usings
 var TemplateSession = Session.namespace("gameStateSummary");
 var Users = Meteor.users;
-var Presets = RedScare.Constants.presets;
 
 Template.gameStateSummary.helpers({
 	gameRounds: function() {
@@ -12,7 +11,7 @@ Template.gameStateSummary.helpers({
 		var totalRounds = 5,
 			existingRounds = this.rounds,
 			allRounds = _.range(1,totalRounds+1),
-			presets = Presets[this.playerCount];
+			presets = this.getSetupConstants();
 		return _.chain(allRounds)
 			.map(function (r) {
 				return { roundNum: r, presets: presets.missions[r], round: existingRounds[r] };

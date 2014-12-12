@@ -1,5 +1,7 @@
-RedScare.NamespaceManager.define("Constants", {
-	gameStatus: Object.freeze({
+RedScare.NamespaceManager.enum(
+	"Constants",
+	"gameStatus",
+	{
 		abandoned: -1,
 		waitingForPlayers: 1,
 		starting: 2,
@@ -8,5 +10,5 @@ RedScare.NamespaceManager.define("Constants", {
 		missionVoting: 5,
 		assassination: 6,
 		gameOver: 7
-	})
-});
+	}
+);

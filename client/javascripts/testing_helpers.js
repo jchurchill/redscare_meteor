@@ -1,8 +1,6 @@
 Meteor.startup(function(){
 
-var Games = RedScare.Collections.Games;
-var Roles = RedScare.Constants.roles;
-var Status = RedScare.Constants.gameStatus;
+var Constants = RedScare.Constants;
 var Users = Meteor.users;
 var TestGameCreationController = MeteorController.namespace("test_game_creation");
 
@@ -15,10 +13,20 @@ var makeUserMapping = function(tuples) {
 
 var tenUsernames = [
 	"test1", "test2", "test3", "test4", "test5",
-	"test6", "test7", "test8", "test9", "test10"];
+	"test6", "test7", "test8", "test9", "test10"
+];
 var tenRoles = [
-	Roles.normalGood, Roles.normalGood, Roles.normalGood, Roles.normalGood, Roles.merlin, Roles.percival,
-	Roles.assassin, Roles.morgana, Roles.oberon, Roles.mordred];
+	Constants.roles.normalGood,
+	Constants.roles.normalGood,
+	Constants.roles.normalGood,
+	Constants.roles.normalGood,
+	Constants.roles.merlin,
+	Constants.roles.percival,
+	Constants.roles.assassin,
+	Constants.roles.morgana,
+	Constants.roles.oberon,
+	Constants.roles.mordred
+];
 
 var getTenUsers = function() {
 	return _.chain(
@@ -32,20 +40,18 @@ var getTenUsers = function() {
 	.value();
 };
 
-// Construct some game setup common to all testing games
-
 var getTenRoleAssignments = function(tenUsers) {
 	return makeUserMapping([
-		[tenUsers[0], Roles.merlin],
-		[tenUsers[1], Roles.percival],
-		[tenUsers[2], Roles.normalGood],
-		[tenUsers[3], Roles.normalGood],
-		[tenUsers[4], Roles.normalGood],
-		[tenUsers[5], Roles.normalGood],
-		[tenUsers[6], Roles.assassin],
-		[tenUsers[7], Roles.morgana],
-		[tenUsers[8], Roles.oberon],
-		[tenUsers[9], Roles.mordred],
+		[tenUsers[0], Constants.roles.merlin],
+		[tenUsers[1], Constants.roles.percival],
+		[tenUsers[2], Constants.roles.normalGood],
+		[tenUsers[3], Constants.roles.normalGood],
+		[tenUsers[4], Constants.roles.normalGood],
+		[tenUsers[5], Constants.roles.normalGood],
+		[tenUsers[6], Constants.roles.assassin],
+		[tenUsers[7], Constants.roles.morgana],
+		[tenUsers[8], Constants.roles.oberon],
+		[tenUsers[9], Constants.roles.mordred],
 	]);
 };
 
@@ -61,7 +67,7 @@ Template.testing_helpers.events({
 			playerCount: 10,
 			roles: tenRoles,
 			players: tenUsers.slice(0,9),
-			status: Status.waitingForPlayers
+			status: Constants.gameStatus.waitingForPlayers
 		});
 	},
 	"click button.revealing-roles": function() {
@@ -77,7 +83,7 @@ Template.testing_helpers.events({
 			roles: tenRoles,
 			playerRoles: tenRoleAssignments,
 			players: tenUsers,
-			status: Status.starting,
+			status: Constants.gameStatus.starting,
 			currentRound: 0,
 			currentLeader: tenUsers[0],
 			passedRoundsCount: 0,
@@ -97,7 +103,7 @@ Template.testing_helpers.events({
 			roles: tenRoles,
 			playerRoles: tenRoleAssignments,
 			players: tenUsers,
-			status: Status.nominating,
+			status: Constants.gameStatus.nominating,
 			currentRound: 1,
 			currentLeader: tenUsers[0],
 			passedRoundsCount: 0,
@@ -125,7 +131,7 @@ Template.testing_helpers.events({
 			roles: tenRoles,
 			players: tenUsers,
 			playerRoles: tenRoleAssignments,
-			status: Status.nominationVoting,
+			status: Constants.gameStatus.nominationVoting,
 			currentRound: 1,
 			currentLeader: tenUsers[0],
 			passedRoundsCount: 0,
@@ -171,7 +177,7 @@ Template.testing_helpers.events({
 			roles: tenRoles,
 			players: tenUsers,
 			playerRoles: tenRoleAssignments,
-			status: Status.missionVoting,
+			status: Constants.gameStatus.missionVoting,
 			currentRound: 1,
 			currentLeader: tenUsers[1],
 			passedRoundsCount: 0,
@@ -245,7 +251,7 @@ Template.testing_helpers.events({
 			roles: tenRoles,
 			players: tenUsers,
 			playerRoles: tenRoleAssignments,
-			status: Status.nominationVoting,
+			status: Constants.gameStatus.nominationVoting,
 			currentRound: 1,
 			currentLeader: tenUsers[4],
 			passedRoundsCount: 0,
@@ -360,7 +366,7 @@ Template.testing_helpers.events({
 			roles: tenRoles,
 			players: tenUsers,
 			playerRoles: tenRoleAssignments,
-			status: Status.assassination,
+			status: Constants.gameStatus.assassination,
 			currentRound: 3,
 			currentLeader: tenUsers[3],
 			passedRoundsCount: 3,

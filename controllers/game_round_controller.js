@@ -1,6 +1,6 @@
 Meteor.startup(function() {
 // Usings
-var Games = RedScare.Collections.Games;
+var Collections = RedScare.Collections;
 var Controller = MeteorController.namespace("game_round");
 
 Controller.methods({
@@ -12,7 +12,7 @@ Controller.methods({
 //////////////////////////////////////
 var _private = {};
 _private.beginNextRound = function(gameId) {
-	var game = Games.findOne(gameId);
+	var game = Collections.Games.findOne(gameId);
 	// TODO
 };
 _private.throwIfNotLoggedIn = function() {

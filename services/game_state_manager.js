@@ -3,21 +3,23 @@ RedScare.NamespaceManager.define("Services.GameStateManager");
 Meteor.startup(function() {
 // Usings
 var GameStateManager = RedScare.Services.GameStateManager;
-var Games = RedScare.Collections.Games;
-var Status = RedScare.Constants.gameStatus;
-var Presets = RedScare.Constants.presets;
+var TransitionUtilities = RedScare.Services.TransitionUtilities;
+var Collections = RedScare.Collections;
+var Constants = RedScare.Constants;
 
 //////////////////////////////////////////////
 // Public methods 
 /////////////////////////////////////////////
 
-GameStateManager.abandonGame = function(gameId, userId, successCallback) {
+GameStateManager.add("abandonGame", function(gameId, userId, successCallback) {
 	var update = {
 		$set: {
-			dateAbandoned: new Date()
+			dateAbandoned: new Date(),
+			status: Constants.gameStatus.abandoned
 		}
 	};
-	includeStatusUpdate(update, Status.abandoned);
+
+	TransitionUtilities.haveUpdateCancelAllTransitions(update);
 
 	var condition = {
 		_id: gameId,
@@ -25,10 +27,10 @@ GameStateManager.abandonGame = function(gameId, userId, successCallback) {
 		creator: userId
 	};
 
-	Games.update(condition, update, callbackIfSuccessful(successCallback));
-};
+	Collections.Games.update(condition, update, callbackIfSuccessful(successCallback));
+});
 
-GameStateManager.addPlayerToGame = function(gameId, userId, successCallback) {
+GameStateManager.add("addPlayerToGame", function(gameId, userId, successCallback) {
 	var update = {
 		$push: { players: userId }
 	};
@@ -40,33 +42,34 @@ GameStateManager.addPlayerToGame = function(gameId, userId, successCallback) {
 		// Do not add a player to a game that is at full capacity
 		$where: "this.players.length < this.playerCount",
 		// Players cannot be added to an in-progress game
-		status: Status.waitingForPlayers
+		status: Constants.gameStatus.waitingForPlayers
 	};
 
-	Games.update(condition, update, callbackIfSuccessful(successCallback));
-};
+	Collections.Games.update(condition, update, callbackIfSuccessful(successCallback));
+});
 
-GameStateManager.removePlayerFromGame = function(gameId, userId, successCallback) {
+GameStateManager.add("removePlayerFromGame", function(gameId, userId, successCallback) {
 	var update = {
-		$pull: { players: userId },
-		$unset: { _transition: '' }
+		$pull: { players: userId }
 	};
+
+	TransitionUtilities.haveUpdateCancelTransitions(["gameStart"], update);
 
 	var condition = {
 		_id: gameId,
 		// The creator of a game cannot leave it
 		creator: { $ne: userId },
 		// Players cannot leave an in-progress game
-		status: Status.waitingForPlayers
+		status: Constants.gameStatus.waitingForPlayers
 	};
 
-	Games.update(condition, update, callbackIfSuccessful(successCallback));
-};
+	Collections.Games.update(condition, update, callbackIfSuccessful(successCallback));
+});
 
-GameStateManager.beginGameIfReady = function(gameId, delayMs, successCallback) {
+GameStateManager.add("beginGameIfReady", function(gameId, delayMs, successCallback) {
 	var update = {
 		$set: {
-			status: Status.starting,
+			status: Constants.gameStatus.starting,
 			rounds: {}
 		}
 	};
@@ -74,19 +77,19 @@ GameStateManager.beginGameIfReady = function(gameId, delayMs, successCallback) {
 	var condition = {
 		_id: gameId,
 		// Begin only if status is still waitingForPlayers
-		status: Status.waitingForPlayers,
+		status: Constants.gameStatus.waitingForPlayers,
 		// and the game is at full capacity,
 		$where: "this.players.length === this.playerCount",
 	};
 
-	Games.delayedUpdate("gameStart", delayMs, condition, update, callbackIfSuccessful(function() {
+	Collections.Games.delayedUpdate("gameStart", delayMs, condition, update, callbackIfSuccessful(function() {
 		// Now that we're safely in a state where players cannot be added or removed,
 		// randomly set up the role assignments, and randomly assign the current leader
 		prepareGame(gameId, successCallback);
 	}));
-};
+});
 
-GameStateManager.markAsSeenSecretInfo = function(gameId, userId, successCallback) {
+GameStateManager.add("markAsSeenSecretInfo", function(gameId, userId, successCallback) {
 	var update = {
 		$push: { seenSecretInfo: userId }
 	};
@@ -98,15 +101,15 @@ GameStateManager.markAsSeenSecretInfo = function(gameId, userId, successCallback
 		// Only players in the game can be marked this way
 		players: { $in: [userId] },
 		// This can only happen during the "starting" phase of the game
-		status: Status.starting
+		status: Constants.gameStatus.starting
 	};
 
-	Games.update(condition, update, callbackIfSuccessful(successCallback));
-};
+	Collections.Games.update(condition, update, callbackIfSuccessful(successCallback));
+});
 
-GameStateManager.setupNewRound = function(gameId, roundNum, delayMs, successCallback) {
-	var game = Games.findOne(gameId, { fields: { playerCount: 1 } });
-	var settings = Presets[game.playerCount].missions[roundNum];
+GameStateManager.add("setupNewRound", function(gameId, roundNum, delayMs, successCallback) {
+	var game = Collections.Games.findOne(gameId, { fields: { playerCount: 1 } });
+	var settings = Constants.presets[game.playerCount].missions[roundNum];
 	if (!settings) { throw "No such round: " + roundNum; } // (i.e., roundNum not in 1-5)
 	
 	var round = {
@@ -117,7 +120,7 @@ GameStateManager.setupNewRound = function(gameId, roundNum, delayMs, successCall
 
 	var updates = { $set: {} };
 	updates.$set.currentRound = roundNum;
-	updates.$set.status = Status.nominating;
+	updates.$set.status = Constants.gameStatus.nominating;
 	updates.$set["rounds." + roundNum] = round;
 
 	var condition = {
@@ -133,15 +136,15 @@ GameStateManager.setupNewRound = function(gameId, roundNum, delayMs, successCall
 		]
 	};
 
-	Games.delayedUpdate("roundStart", delayMs, condition, updates, callbackIfSuccessful(successCallback));
-}
+	Collections.Games.delayedUpdate("roundStart", delayMs, condition, updates, callbackIfSuccessful(successCallback));
+});
 
 /////////////////////////////////
 // Private methods
 /////////////////////////////////
 
 function prepareGame(gameId, successCallback) {
-	var game = Games.findOne(gameId, { fields: { players: 1, roles: 1 } });
+	var game = Collections.Games.findOne(gameId, { fields: { players: 1, roles: 1 } });
 	var shuffledRoles = _.shuffle(game.roles);
 	var roleAssignments = _.indexByAndMap(game.players, _.identity, function(user, i) {
 		return shuffledRoles[i];
@@ -163,10 +166,10 @@ function prepareGame(gameId, successCallback) {
 		_id: gameId,
 		// To be safe, only do this when the status is "starting",
 		// meaning we have moved past the waitingForPlayers phase
-		status: Status.starting
+		status: Constants.gameStatus.starting
 	};
 
-	Games.update(condition, update, callbackIfSuccessful(successCallback));
+	Collections.Games.update(condition, update, callbackIfSuccessful(successCallback));
 };
 
 function callbackIfSuccessful(successCallback) {
@@ -177,6 +180,6 @@ function callbackIfSuccessful(successCallback) {
 		}
 		successCallback.call();
 	};
-}
+};
 
 });
